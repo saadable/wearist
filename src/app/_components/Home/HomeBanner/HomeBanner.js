@@ -4,7 +4,7 @@ import Banner from "@/Components/Images/Banner.webp";
 
 const HomeBanner = () => {
   return (
-    <div className="relative w-full h-[100vh] overflow-hidden">
+    <div className="relative w-full h-[40vh] md:h-[100vh] overflow-hidden">
       {/* Background Image */}
       {/* Using object-cover to ensure the image fills the container, which is often better for banners. */}
       <Image

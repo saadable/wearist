@@ -4,7 +4,7 @@ import Image from 'next/image'
 const SaleBanner = () => {
   return (
     <div className='flex items-center justify-center'>
-      <Image src={Banner} alt="Sale Banner" className='w-full h-[400px]'/>
+      <Image src={Banner} alt="Sale Banner" className='w-full h-[200px] md:h-[400px]'/>
     </div>
   )
 }

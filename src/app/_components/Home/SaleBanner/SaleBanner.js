@@ -3,7 +3,7 @@ import Banner from '../../../../Components/Images/Picsart_25-10-28_21-17-03-785.
 import Image from 'next/image'
 const SaleBanner = () => {
   return (
-    <div className='flex items-center justify-center'>
+    <div className='flex items-center justify-center my-10'>
       <Image src={Banner} alt="Sale Banner" className='w-full h-[200px] md:h-[400px]'/>
     </div>
   )

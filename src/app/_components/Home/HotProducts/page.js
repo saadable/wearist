@@ -11,7 +11,8 @@ const HotProducts = () => {
       altText: 'Side view of Apple AirPods Pro 2nd Generation wireless earbuds',
       old_price: '3500',
       new_price: '2000',
-      img: Airpods1
+      img: Airpods1,
+      slug: 'apple-airpods-pro-2nd-generation-active-noise-cancellation'
     },
     {
       title: 'Casual Cotton Cap – Everyday Streetwear Style',

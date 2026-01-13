@@ -1,17 +1,26 @@
 'use client'
-import React, { useState, useEffect } from 'react'
-import { usePathname } from 'next/navigation';
+import React, { useState, useEffect, useRef } from 'react'
+import { usePathname, useRouter } from 'next/navigation';
 import Logo from '@/Components/Images/Logo.png'
 import Image from 'next/image'
-import { FaCartShopping } from "react-icons/fa6";
+import { FaCartShopping, FaStar } from "react-icons/fa6";
 import { IoSearchSharp, IoClose } from "react-icons/io5";
 import Link from 'next/link';
 import { TiThMenu } from "react-icons/ti";
+import { products } from '@/data/products'
 
 const Navbar = () => {
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [openSubmenu, setOpenSubmenu] = useState(null);
+
+    const router = useRouter();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const searchRef = useRef(null);
+    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+    const mobileSearchInputRef = useRef(null);
 
     useEffect(() => {
         // prevent body scroll and close on Escape
@@ -23,6 +32,41 @@ const Navbar = () => {
             window.removeEventListener('keydown', onKey);
         };
     }, [mobileOpen]);
+
+    // Debounced suggestions based on search term (desktop only)
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            const q = (searchTerm || '').trim().toLowerCase();
+            if (!q) {
+                setSuggestions([]);
+                return;
+            }
+            const matches = products.filter(p => p.title.toLowerCase().includes(q));
+            matches.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            setSuggestions(matches.slice(0, 5));
+            setShowSuggestions(true);
+        }, 250);
+        return () => clearTimeout(handler);
+    }, [searchTerm]);
+
+    // Close suggestions on outside click
+    useEffect(() => {
+        const onDocClick = (e) => {
+            if (searchRef.current && !searchRef.current.contains(e.target)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener('click', onDocClick);
+        return () => document.removeEventListener('click', onDocClick);
+    }, []);
+
+    // Focus mobile search input when overlay opens and show suggestions
+    useEffect(() => {
+        if (mobileSearchOpen && mobileSearchInputRef.current) {
+            setTimeout(() => mobileSearchInputRef.current.focus(), 50);
+            setShowSuggestions(!!searchTerm);
+        }
+    }, [mobileSearchOpen, searchTerm]);
 
     const Links = [
         { label: 'Airpods', href: '/airpods', pageName: 'airpods' },
@@ -50,11 +94,44 @@ const Navbar = () => {
                                 <Image src={Logo} alt='Logo Image' width={1000} height={1000} className='w-[130px] md:w-[200px]' />
                             </div>
                         </Link>
-                        <div className="search-bar hidden md:flex border border-white  rounded-md w-[400px] h-[40px] -ml-20  justify-between items-center">
-                            <input type="text" className='w-full active:border-0 active:outline-none px-3 py-1 outline-none border-none ' placeholder='Search' />
-                            <div className="icons bg-[#2785ca] rounded-r-md w-[50px] h-full flex justify-center items-center">
-                                <IoSearchSharp className='text-white' />
-                            </div>
+                        <div ref={searchRef} className="search-container hidden md:block relative -ml-20">
+                            <form onSubmit={(e) => { e.preventDefault(); const q = searchTerm.trim(); if (q) router.push(`/products?query=${encodeURIComponent(q)}`); else router.push('/products'); }} className="search-bar flex border border-white rounded-md w-[400px] h-[40px] justify-between items-center">
+                                <input
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onFocus={() => setShowSuggestions(true)}
+                                    type="text"
+                                    className='w-full active:border-0 active:outline-none px-3 py-1 outline-none border-none'
+                                    placeholder='Search products (e.g. AirPods)'
+                                    aria-label='Search products'
+                                />
+                                <div className="icons bg-[#2785ca] rounded-r-md w-[50px] h-full flex justify-center items-center">
+                                    <button type='submit' className='text-white'><IoSearchSharp /></button>
+                                </div>
+                            </form>
+
+                            {showSuggestions && searchTerm && (
+                                <div className="absolute left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-200 z-50 max-h-72 overflow-auto">
+                                    <ul>
+                                        {suggestions.map(p => (
+                                            <li key={p.slug} className='px-3 py-2 hover:bg-gray-50'>
+                                                <Link href={`/products/${p.slug}`} onClick={() => setShowSuggestions(false)} className='flex items-center gap-3'>
+                                                    <Image src={p.image} alt={p.altText || p.title} width={48} height={48} className='w-12 h-12 object-cover rounded' />
+                                                    <div className='flex-1'>
+                                                        <div className='text-sm text-[#2785ca] font-medium'>{p.title.length > 60 ? `${p.title.slice(0, 60)}...` : p.title}</div>
+                                                        <div className='text-xs text-gray-500 flex items-center gap-2 mt-1'>
+                                                            <span className='text-yellow-500 flex items-center gap-1'><FaStar /> {p.rating ?? '—'}</span>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <div className='border-t p-2 text-right'>
+                                        <Link href={`/products?query=${encodeURIComponent(searchTerm)}`} onClick={() => setShowSuggestions(false)} className='text-sm text-[#2785ca] font-medium'>See all results</Link>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <div className="cart-menu flex items-center gap-2">
                             <div className="cart relative flex items-center gap-2 cursor-pointer text-white">
@@ -124,6 +201,12 @@ const Navbar = () => {
                     </div>
 
                     <nav className="px-4 mt-4">
+                        <div className="mb-3 border border-white">
+                            <button  onClick={() => { setMobileOpen(false); setMobileSearchOpen(true); setSearchTerm(''); setShowSuggestions(false); }} className="w-full text-left px-3 py-2 rounded  hover:bg-[#1f6ea5] transition-colors flex items-center gap-2">
+                                <IoSearchSharp />
+                                <span>Search products</span>
+                            </button>
+                        </div>
                         {Links.map(link => {
                             const isActive = link.href && (pathname === link.href || pathname.startsWith(link.href + '/'));
                             return (
@@ -151,6 +234,55 @@ const Navbar = () => {
                         })}
                     </nav>
                 </aside>
+
+                {mobileSearchOpen && (
+                    <div className="fixed inset-0 z-[60] flex items-start justify-center">
+                        <div className="fixed inset-0 bg-black/40" onClick={() => setMobileSearchOpen(false)} />
+                        <div className="relative mt-20 w-full px-4">
+                            <div className="mx-auto max-w-lg bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+                                <div className='flex items-center w-full'>
+                                    <input
+                                        ref={mobileSearchInputRef}
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        placeholder='Search products...'
+                                        className='w-full px-4 text-black py-2 border border-blue-600 rounded-[2px 0px 0px 2px] focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
+                                        aria-label='Search products'
+                                    />
+                                    <button onClick={() => { const q = searchTerm.trim(); if (q) router.push(`/products?query=${encodeURIComponent(q)}`); else router.push('/products'); setMobileSearchOpen(false); }} className='bg-[#2785ca] px-4 py-2 text-white rounded-[0px 2px 2px 0px]'>Search</button>
+                                    {/* <button className='p-2 text-black' onClick={() => setMobileSearchOpen(false)} aria-label='Close search'><IoClose /></button> */}
+                                </div>
+
+                                <div className='mt-3 max-h-72 overflow-auto'>
+                                    {searchTerm ? (
+                                        <ul>
+                                            {suggestions.map(p => (
+                                                <li key={p.slug} className='px-2 py-2 border-b last:border-b-0'>
+                                                    <Link href={`/products/${p.slug}`} onClick={() => setMobileSearchOpen(false)} className='flex items-center gap-3'>
+                                                        <Image src={p.image} alt={p.altText || p.title} width={48} height={48} className='w-12 h-12 object-cover rounded' />
+                                                        <div className='flex-1'>
+                                                            <div className='text-sm text-[#2785ca] font-medium'>{p.title.length > 60 ? `${p.title.slice(0, 60)}...` : p.title}</div>
+                                                            <div className='text-xs text-gray-500 flex items-center gap-2 mt-1'>
+                                                                <span className='text-yellow-500 flex items-center gap-1'><FaStar /> {p.rating ?? '—'}</span>
+                                                            </div>
+                                                        </div>
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className='text-sm text-gray-500'>Try searching for “AirPods”</p>
+                                    )}
+                                </div>
+
+                                <div className='mt-3 text-right'>
+                                    <Link href={`/products?query=${encodeURIComponent(searchTerm)}`} onClick={() => setMobileSearchOpen(false)} className='text-sm text-[#2785ca] font-medium'>See all results</Link>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                )}
 
             </div >
         </div>

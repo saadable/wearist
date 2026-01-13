@@ -1,11 +1,14 @@
 'use client'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { FaStar } from "react-icons/fa6";
 import { FaStarHalfAlt, FaHeart, FaRegHeart } from "react-icons/fa";
 
 const ProductCard = ({ props }) => {
     const [isWishlisted, setIsWishlisted] = useState(false);
+
+    const slug = props?.slug ?? props?.id ?? props?.title?.toString().toLowerCase().trim().replace(/[^a-z0-9]+/g, '-') ;
 
     useEffect(() => {
         const key = props?.id ?? props?.title;
@@ -60,10 +63,12 @@ const ProductCard = ({ props }) => {
                 >
                     {isWishlisted ? <FaHeart className='text-red-400 w-4 h-4' /> : <FaRegHeart className='text-red-400 w-4 h-4 font-extralight' />}
                 </button>
-                <Image src={props.image} alt={props.altText} width={1000} height={1000} className='w-[250px] rounded-[10px]' />
+                <Link href={`/products/${slug}`} className='block'>
+                  <Image src={props.image} alt={props.altText} width={1000} height={1000} className='w-[250px] rounded-[10px]' />
+                </Link>
             </div>
             <div className='product-details flex flex-col items-start gap- justify-between h-[150px]'>
-                <h1 className='font-bold text-xl text-[16px] text-[#2785ca]'>{props.title}</h1>
+                <h1 className='font-bold text-xl text-[16px] text-[#2785ca]'><Link href={`/products/${slug}`}>{props.title}</Link></h1>
                 <div className='prices'>
                     <span className='new-price font-semibold text-green-600'>PKR {props.new_price} </span>
 

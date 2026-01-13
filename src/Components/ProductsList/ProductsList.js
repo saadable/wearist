@@ -69,7 +69,7 @@ const ProductsList = ({ initialQuery = '' }) => {
         {filtered.length === 0 ? (
           <div className='text-center text-gray-500 py-12'>No products found.</div>
         ) : (
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+          <div className='grid grid-cols-1 sm:flex sm:flex-col sm:items-center sm:justify-center md:grid-cols-3 lg:grid-cols-4 gap-6'>
             {filtered.map((product) => (
               <ProductCard key={product.id || product.slug || product.title} props={product} />
             ))}

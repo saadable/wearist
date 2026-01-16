@@ -38,11 +38,11 @@ const HotProducts = () => {
     }
   ]
   return (
-    <div>
-      <h1 className='text-center text-[30px] md:text-[40px] font-extrabold text-[#2785ca] my-7'>Hot Products</h1>
-      <div className="products flex md:flex-row flex-col items-center justify-center gap-5 ">
+    <div className='px-4 py-6 sm:py-8 md:py-12  '>
+      <h1 className='text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#2785ca] mb-6 md:mb-8 lg:mb-10'>Hot Products</h1>
+      <div className="products flex flex-wrap flex-col md:flex-row items-center justify-center gap-4 md:gap-6 lg:gap-8 max-w-6xl mx-auto">
         {Products.map((item, i)=>(
-          <ProductCard key={i} props={{title: item.title, altText: item.altText, old_price: item.old_price, new_price: item.new_price, image: item.img}}/>
+          <ProductCard key={i} props={{title: item.title, altText: item.altText, old_price: item.old_price, new_price: item.new_price, image: item.img, rating: 4.5, review_count: 50}}/>
         ))}
       </div>
     </div>

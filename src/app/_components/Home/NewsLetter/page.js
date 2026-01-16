@@ -42,16 +42,16 @@ const NewsLetter = ({ title = 'Join our Newsletter', subtitle = 'Get the latest 
     }
 
     return (
-        <div className='flex items-center justify-center px-10 md:px-0'>
-            <section className='newsletter my-10  w-full md:w-[900px]  rounded-lg p-4 md:p-6 bg-white border border-[#2785ca] shadow-sm'>
-                <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-4 '>
+        <div className='flex items-center justify-center px-4 sm:px-6 md:px-0'>
+            <section className='newsletter my-6 sm:my-8 md:my-12 w-full md:w-[900px] rounded-lg p-4 sm:p-6 md:p-8 bg-white border border-[#2785ca] shadow-sm'>
+                <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4 md:gap-6'>
                     <div>
-                        <h2 className='text-[#2785ca] text-[18px] md:text-2xl font-bold'>{title}</h2>
-                        <p className='text-gray-600 text-[14px] md:text-[16px] mt-1'>{subtitle}</p>
+                        <h2 className='text-[#2785ca] text-lg sm:text-xl md:text-2xl font-bold'>{title}</h2>
+                        <p className='text-gray-600 text-xs sm:text-sm md:text-base mt-1 sm:mt-2'>{subtitle}</p>
                     </div>
 
                     <form className='' onSubmit={handleSubmit} aria-live='polite'>
-                        <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-3 sm:mt-0 w-full md:w-[500px]'>
+                        <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-3 sm:mt-0 w-full sm:w-auto'>
                             <label htmlFor='newsletter-email' className='sr-only'>Email address</label>
 
                             <input
@@ -60,30 +60,29 @@ const NewsLetter = ({ title = 'Join our Newsletter', subtitle = 'Get the latest 
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder='Your email address'
-                                className='w-full md:w-[500px] sm:flex-1 text-sm text-black px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
+                                className='w-full sm:w-auto sm:flex-1 text-xs sm:text-sm text-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                                 aria-invalid={status === 'error' ? 'true' : 'false'}
                                 required
                             />
 
                             <button
                                 type='submit'
-                                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 text-[14px] md:text-[16px] rounded-md font-semibold text-white bg-[#2785ca] hover:bg-[#1f6fa8] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2785ca] transition-colors ${status === 'loading' ? 'opacity-80 pointer-events-none' : ''}`}
+                                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm md:text-base rounded-md font-semibold text-white bg-[#2785ca] hover:bg-[#1f6fa8] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2785ca] transition-colors ${status === 'loading' ? 'opacity-80 pointer-events-none' : ''}`}
                                 aria-busy={status === 'loading'}
                             >
-                                {status === 'success' ? <FaCheckCircle className='text-white' /> : <FaPaperPlane className='text-white' />}
+                                {status === 'success' ? <FaCheckCircle className='text-white text-sm sm:text-base' /> : <FaPaperPlane className='text-white text-sm sm:text-base' />}
                                 <span>{status === 'success' ? 'Subscribed' : status === 'loading' ? 'Sending...' : 'Subscribe'}</span>
                             </button>
                         </div>
 
-                        <div className="status mt-2 w-full  ">
-                            {status === 'success' && <p className='text-[14px] md:text-[16px] text-green-600 flex items-center gap-2 justify-center sm:justify-start'><FaCheckCircle /> Thank you! You have been subscribed.</p>}
-                            {status === 'error' && <p className='text-[14px] md:text-[16px] text-red-600 text-center sm:text-left'>{error}</p>}
+                        <div className="status mt-2 w-full">
+                            {status === 'success' && <p className='text-xs sm:text-sm md:text-base text-green-600 flex items-center gap-2 justify-center sm:justify-start'><FaCheckCircle /> Thank you! You have been subscribed.</p>}
+                            {status === 'error' && <p className='text-xs sm:text-sm md:text-base text-red-600 text-center sm:text-left'>{error}</p>}
                         </div>
                     </form>
                 </div>
 
-                <div className='mt-3'>
-
+                <div className='mt-3 sm:mt-4'>
                     <p className='mt-2 text-xs text-gray-500'>We respect your privacy — unsubscribe at any time.</p>
                 </div>
             </section>

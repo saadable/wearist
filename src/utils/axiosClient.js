@@ -1,5 +1,5 @@
 import axios from "axios";
-import { refreshAccessToken } from './auth'
+
 
 const getBaseUrl = () => {
     // prefer exposed NEXT_PUBLIC_BASE_URL for client-side, fall back to BASE_URL or window origin

@@ -89,7 +89,7 @@ const Checkout = () => {
         totalPrice
       })
 
-      const response = await axiosClient.post('http://localhost:4000/api/orders/create-order', {
+      const response = await axiosClient.post('/api/orders/create-order', {
         items,
         firstName: firstName.trim(),
         lastName: lastName.trim(),

@@ -6,53 +6,151 @@ import { useSelector, useDispatch } from 'react-redux'
 import { FaUniversity, FaMoneyBillWave, FaShoppingBag, FaCheck } from 'react-icons/fa'
 import Link from 'next/link'
 import { clearCart } from '@/store/cartSlice'
+import axios from 'axios'
+import { axiosClient } from '@/utils/axiosClient'
 
 const Checkout = () => {
   const dispatch = useDispatch()
   const { items, totalPrice } = useSelector(state => state.cart)
+  console.log("ITEMS", items);
+  
+  // const [paymentMethod, setPaymentMethod] = useState('cod')
+  const [orderItems, setOrderItems] = useState(items)
+  // const [formData, setFormData] = useState({
+  //   firstName: '',
+  //   lastName: '',
+  //   email: '',
+  //   phone: '',
+  //   address: '',
+  //   city: '',
+  //   postalCode: '',
+  // })
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [address, setAddress] = useState('')
+  const [city, setCity] = useState('')
+  const [postalCode, setPostalCode] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('cod')
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    postalCode: '',
-  })
+  const [country, setCountry] = useState('Pakistan')
   const [orderPlaced, setOrderPlaced] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [orderId, setOrderId] = useState(null)
+  const [orderTotal, setOrderTotal] = useState(0)
 
-  if (items.length === 0 && !orderPlaced) {
-    return (
-      <div className='max-w-4xl mx-auto px-4 py-8 sm:py-12 text-center'>
-        <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-[#2785ca] mb-4'>Checkout</h1>
-        <p className='text-sm sm:text-base text-gray-600 mb-6'>Your cart is empty. Add items before checkout.</p>
-        <Link href='/products' className='inline-block bg-[#2785ca] text-white px-6 py-2 rounded-md font-semibold text-sm sm:text-base'>
-          Continue Shopping
-        </Link>
-      </div>
-    )
-  }
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
-
-  const handlePlaceOrder = (e) => {
+  async function submitOrder(e){
     e.preventDefault()
     
-    if (!formData.firstName || !formData.email || !formData.phone || !formData.address || !formData.city) {
-      alert('Please fill in all required fields')
+    // Reset previous errors
+    setError('')
+    
+    // Validate required fields
+    if (!firstName.trim()) {
+      setError('First name is required')
+      return
+    }
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Valid email address is required')
+      return
+    }
+    if (!phone.trim() || phone.length < 10) {
+      setError('Valid phone number is required')
+      return
+    }
+    if (!address.trim()) {
+      setError('Street address is required')
+      return
+    }
+    if (!city.trim()) {
+      setError('City is required')
+      return
+    }
+    if (!items || items.length === 0) {
+      setError('Your cart is empty')
       return
     }
 
-    // Order placement logic here (would connect to backend)
-    console.log('Order placed:', { ...formData, paymentMethod, items, totalPrice })
+    setIsLoading(true)
     
-    setOrderPlaced(true)
-    dispatch(clearCart())
+    try {
+      console.log('Submitting order with data:', {
+        items,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        address: address.trim(),
+        city: city.trim(),
+        postalCode: postalCode.trim(),
+        country,
+        phone: phone.trim(),
+        email: email.trim(),
+        paymentMethod,
+        totalPrice
+      })
+
+      const response = await axiosClient.post('http://localhost:4000/api/orders/create-order', {
+        items,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        address: address.trim(),
+        city: city.trim(),
+        postalCode: postalCode.trim(),
+        country,
+        phone: phone.trim(),
+        email: email.trim(),
+        paymentMethod,
+        totalPrice
+      })
+
+      console.log('Order response received:', response.data)
+
+      if (response.status === 201 && response.data && response.data.status === 'success') {
+        console.log('Order created successfully:', response.data.Result)
+        const orderData = response.data.Result.orderDetails
+        setOrderId(orderData._id)
+        setOrderTotal(orderData.totalPrice)
+        dispatch(clearCart())
+        setOrderPlaced(true)
+      } else {
+        const errorMsg = response.data?.message || 'Failed to create order. Please try again.'
+        console.warn('Order creation failed:', errorMsg)
+        setError(errorMsg)
+      }
+    } catch (err) {
+      console.error('Order submission error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        fullError: err
+      })
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to place order. Please try again.'
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
   }
+
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target
+  //   setFormData(prev => ({ ...prev, [name]: value }))
+  // }
+
+  // const handlePlaceOrder = (e) => {
+  //   e.preventDefault()
+    
+  //   if (!formData.firstName || !formData.email || !formData.phone || !formData.address || !formData.city) {
+  //     alert('Please fill in all required fields')
+  //     return
+  //   }
+  //   const orderDetails = localStorage.getItem('cart')
+  //   console.log('Order Details:', orderDetails.items)
+  //   // Order placement logic here (would connect to backend)
+  //   console.log('Order placed:', { ...formData, paymentMethod, items, totalPrice })
+    
+  //   setOrderPlaced(true)
+  //   dispatch(clearCart())
+  // }
 
   if (orderPlaced) {
     return (
@@ -64,10 +162,10 @@ const Checkout = () => {
             </div>
           </div>
           <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-green-600 mb-2'>Order Placed Successfully!</h1>
-          <p className='text-sm sm:text-base text-gray-700 mb-6'>Thank you for your purchase. Your order has been confirmed.</p>
+          <p className='text-sm sm:text-base text-gray-700 mb-6'>You will receive a confirmation call shortly to confirm your order.</p>
           <div className='bg-white border border-gray-200 rounded-lg p-4 mb-6 text-left space-y-2'>
-            <p className='text-xs sm:text-sm text-gray-600'><strong>Order ID:</strong> #WRT{Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
-            <p className='text-xs sm:text-sm text-gray-600'><strong>Total Amount:</strong> PKR {totalPrice.toFixed(2)}</p>
+            <p className='text-xs sm:text-sm text-gray-600'><strong>Order ID:</strong> <span className='font-semibold text-blue-600 font-mono'>{orderId}</span></p>
+            <p className='text-xs sm:text-sm text-gray-600'><strong>Total Amount:</strong> <span className='font-semibold text-green-600'>PKR {orderTotal.toFixed(2)}</span></p>
             <p className='text-xs sm:text-sm text-gray-600'><strong>Payment Method:</strong> {paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod === 'bank' ? 'Bank Transfer' : paymentMethod === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'}</p>
           </div>
           <Link href='/products' className='inline-block bg-[#2785ca] text-white px-6 py-2 rounded-md font-semibold text-sm sm:text-base'>
@@ -84,7 +182,14 @@ const Checkout = () => {
 
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8'>
         {/* Checkout Form */}
-        <form onSubmit={handlePlaceOrder} className='lg:col-span-2 space-y-6'>
+        <form onSubmit={submitOrder} className='lg:col-span-2 space-y-6'>
+          {/* Error Alert */}
+          {error && (
+            <div className='bg-red-50 border-l-4 border-red-500 rounded-lg p-4'>
+              <p className='text-red-700 text-sm font-semibold'>{error}</p>
+            </div>
+          )}
+
           {/* Shipping Address */}
           <div className='bg-white border border-[#2785ca] rounded-lg p-4 sm:p-6 shadow-sm'>
             <h2 className='text-lg sm:text-xl font-bold text-[#2785ca] mb-4 flex items-center gap-2'>
@@ -97,8 +202,8 @@ const Checkout = () => {
                 <input
                   type='text'
                   name='firstName'
-                  value={formData.firstName}
-                  onChange={handleInputChange}
+                  // value={formData.firstName}
+                  onChange={(e)=>setFirstName(e.target.value)}
                   className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                   required
                 />
@@ -108,8 +213,8 @@ const Checkout = () => {
                 <input
                   type='text'
                   name='lastName'
-                  value={formData.lastName}
-                  onChange={handleInputChange}
+                  // value={formData.lastName}
+                  onChange={(e)=>setLastName(e.target.value)}
                   className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                 />
               </div>
@@ -121,8 +226,8 @@ const Checkout = () => {
                 <input
                   type='email'
                   name='email'
-                  value={formData.email}
-                  onChange={handleInputChange}
+                  // value={formData.email}
+                  onChange={(e)=>setEmail(e.target.value)}
                   className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                   required
                 />
@@ -132,8 +237,8 @@ const Checkout = () => {
                 <input
                   type='tel'
                   name='phone'
-                  value={formData.phone}
-                  onChange={handleInputChange}
+                  // value={formData.phone}
+                  onChange={(e)=>setPhone(e.target.value)}
                   className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                   placeholder='03001234567'
                   required
@@ -146,8 +251,8 @@ const Checkout = () => {
               <input
                 type='text'
                 name='address'
-                value={formData.address}
-                onChange={handleInputChange}
+                // value={formData.address}
+                onChange={(e)=>setAddress(e.target.value)}
                 className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                 placeholder='123 Main Street'
                 required
@@ -160,8 +265,8 @@ const Checkout = () => {
                 <input
                   type='text'
                   name='city'
-                  value={formData.city}
-                  onChange={handleInputChange}
+                  // value={formData.city}
+                  onChange={(e)=>setCity(e.target.value)}
                   className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                   placeholder='Karachi'
                   required
@@ -172,8 +277,8 @@ const Checkout = () => {
                 <input
                   type='text'
                   name='postalCode'
-                  value={formData.postalCode}
-                  onChange={handleInputChange}
+                  // value={formData.postalCode}
+                  onChange={(e)=>setPostalCode(e.target.value)}
                   className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                   placeholder='75600'
                 />
@@ -283,6 +388,17 @@ const Checkout = () => {
               </div>
             )}
           </div>
+
+          {/* Place Order Button - Inside Form */}
+          <div className='bg-white border border-[#2785ca] rounded-lg p-4 sm:p-6 shadow-sm mt-6'>
+            <button
+              type='submit'
+              disabled={isLoading}
+              className='w-full bg-[#2785ca] text-white py-3 sm:py-4 rounded-md font-bold text-sm sm:text-base hover:bg-[#1f6fa8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+            >
+              {isLoading ? 'Processing Order...' : 'Place Order'}
+            </button>
+          </div>
         </form>
 
         {/* Order Summary Sidebar */}
@@ -319,25 +435,15 @@ const Checkout = () => {
               </div>
             </div>
 
-            {/* Place Order Button */}
-            <button
-              onClick={handlePlaceOrder}
-              className='w-full bg-white text-[#2785ca] py-2 sm:py-3 rounded-md font-bold text-sm sm:text-base hover:bg-gray-100 transition-colors'
-            >
-              Place Order
-            </button>
-
             <Link
               href='/products'
-              className='block text-center mt-2 sm:mt-3 border-2 border-white text-white py-2 rounded-md font-semibold text-sm sm:text-base hover:bg-[#1f6fa8] transition-colors'
+              className='block text-center mt-2 sm:mt-3 border-2 border-[#2785ca] text-[#2785ca] py-2 rounded-md font-semibold text-sm sm:text-base hover:bg-blue-50 transition-colors'
             >
               Continue Shopping
             </Link>
           </div>
         </div>
       </div>
-        
-      
     </div>
   
   )

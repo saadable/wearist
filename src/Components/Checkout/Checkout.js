@@ -204,7 +204,7 @@ const Checkout = () => {
                   name='firstName'
                   // value={formData.firstName}
                   onChange={(e)=>setFirstName(e.target.value)}
-                  className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
+                  className='w-full px-3 sm:px-4 py-2 text-black text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                   required
                 />
               </div>
@@ -215,7 +215,7 @@ const Checkout = () => {
                   name='lastName'
                   // value={formData.lastName}
                   onChange={(e)=>setLastName(e.target.value)}
-                  className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
+                  className='w-full px-3 text-black sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                 />
               </div>
             </div>
@@ -228,7 +228,7 @@ const Checkout = () => {
                   name='email'
                   // value={formData.email}
                   onChange={(e)=>setEmail(e.target.value)}
-                  className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
+                  className='w-full px-3 text-black sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                   required
                 />
               </div>
@@ -239,7 +239,7 @@ const Checkout = () => {
                   name='phone'
                   // value={formData.phone}
                   onChange={(e)=>setPhone(e.target.value)}
-                  className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
+                  className='w-full px-3 sm:px-4 text-black py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                   placeholder='03001234567'
                   required
                 />
@@ -253,7 +253,7 @@ const Checkout = () => {
                 name='address'
                 // value={formData.address}
                 onChange={(e)=>setAddress(e.target.value)}
-                className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
+                className='w-full px-3 sm:px-4 text-black py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                 placeholder='123 Main Street'
                 required
               />
@@ -267,7 +267,7 @@ const Checkout = () => {
                   name='city'
                   // value={formData.city}
                   onChange={(e)=>setCity(e.target.value)}
-                  className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
+                  className='w-full px-3 sm:px-4 text-black py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                   placeholder='Karachi'
                   required
                 />
@@ -279,7 +279,7 @@ const Checkout = () => {
                   name='postalCode'
                   // value={formData.postalCode}
                   onChange={(e)=>setPostalCode(e.target.value)}
-                  className='w-full px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
+                  className='w-full px-3 sm:px-4 text-black py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
                   placeholder='75600'
                 />
               </div>

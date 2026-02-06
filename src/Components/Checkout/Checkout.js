@@ -11,7 +11,8 @@ import { axiosClient } from '@/utils/axiosClient'
 
 const Checkout = () => {
   const dispatch = useDispatch()
-  const { items, totalPrice } = useSelector(state => state.cart)
+  const cartState = useSelector(state => state.cart) || {}
+  const { items = [], totalPrice = 0 } = cartState
   console.log("ITEMS", items);
   
   // const [paymentMethod, setPaymentMethod] = useState('cod')
@@ -69,6 +70,13 @@ const Checkout = () => {
     }
     if (!items || items.length === 0) {
       setError('Your cart is empty')
+      return
+    }
+
+    // Validate stock availability before submitting
+    const unavailable = items.filter(i => i.stock === false || i.stock === 'false')
+    if (unavailable.length > 0) {
+      setError('One or more items in your cart are out of stock. Please remove them before placing the order.')
       return
     }
 
@@ -414,7 +422,7 @@ const Checkout = () => {
                     <p className='font-semibold line-clamp-2'>{item.title}</p>
                     <p className='text-[#e0e0e0] text-xs'>Qty: {item.quantity}</p>
                   </div>
-                  <p className='font-semibold'>PKR {(item.new_price * item.quantity).toFixed(2)}</p>
+                  <p className='font-semibold'>PKR {(((Number(item.new_price) || 0) * (Number(item.quantity) || 0))).toFixed(2)}</p>
                 </div>
               ))}
             </div>
@@ -423,7 +431,7 @@ const Checkout = () => {
             <div className='border-t border-[#1f6fa8] pt-3 md:pt-4 space-y-2 mb-4 md:mb-6'>
               <div className='flex justify-between text-xs sm:text-sm'>
                 <span>Subtotal:</span>
-                <span>PKR {totalPrice.toFixed(2)}</span>
+                <span>PKR {(Number(totalPrice) || 0).toFixed(2)}</span>
               </div>
               <div className='flex justify-between text-xs sm:text-sm'>
                 <span>Shipping:</span>
@@ -431,7 +439,7 @@ const Checkout = () => {
               </div>
               <div className='flex justify-between text-base sm:text-lg font-bold pt-2 border-t border-[#1f6fa8]'>
                 <span>Total:</span>
-                <span>PKR {totalPrice.toFixed(2)}</span>
+                <span>PKR {(Number(totalPrice) || 0).toFixed(2)}</span>
               </div>
             </div>
 

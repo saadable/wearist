@@ -7,14 +7,16 @@ import { FaCartShopping, FaStar } from "react-icons/fa6";
 import { IoSearchSharp, IoClose } from "react-icons/io5";
 import Link from 'next/link';
 import { TiThMenu } from "react-icons/ti";
-import { products } from '@/data/products'
 import { useSelector } from 'react-redux'
+import { useAllProducts } from '@/hooks/useProducts'
 
 const Navbar = () => {
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [openSubmenu, setOpenSubmenu] = useState(null);
     const { totalItems } = useSelector(state => state.cart)
+    const { products } = useAllProducts()
+    const [categories, setCategories] = useState([])
 
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
@@ -23,6 +25,21 @@ const Navbar = () => {
     const searchRef = useRef(null);
     const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
     const mobileSearchInputRef = useRef(null);
+
+    // Extract unique categories from products
+    useEffect(() => {
+        if (products && products.length > 0) {
+            const uniqueCategories = [...new Set(products.map(p => p.category).filter(Boolean))]
+                .map(cat => ({
+                    label: cat.charAt(0).toUpperCase() + cat.slice(1),
+                    href: `/category/${cat.toLowerCase()}`,
+                    category: cat.toLowerCase()
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label))
+            
+            setCategories(uniqueCategories)
+        }
+    }, [products])
 
     useEffect(() => {
         // prevent body scroll and close on Escape
@@ -43,8 +60,11 @@ const Navbar = () => {
                 setSuggestions([]);
                 return;
             }
-            const matches = products.filter(p => p.title.toLowerCase().includes(q));
-            matches.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            const matches = products.filter(p => 
+              p.title?.toLowerCase().includes(q) ||
+              p.category?.toLowerCase().includes(q)
+            );
+            matches.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
             setSuggestions(matches.slice(0, 5));
             setShowSuggestions(true);
         }, 250);
@@ -70,22 +90,7 @@ const Navbar = () => {
         }
     }, [mobileSearchOpen, searchTerm]);
 
-    const Links = [
-        { label: 'Airpods', href: '/airpods', pageName: 'airpods' },
-        { label: 'Headphones', href: '/headphones' },
-        { label: 'Watches', href: '' },
-        { label: 'Glasses', href: '' },
-        { label: 'Hats', href: '' },
-        {
-            label: 'Accessories',
-            href: '',
-            sublinks: [
-                { label: 'Rings', href: '' },
-                { label: 'Bracelets', href: '' },
-                { label: 'Necklaces', href: '' },
-            ]
-        },
-    ]
+    const Links = categories
     return (
         <div>
             <div className="nav  text-white font-bold">
@@ -152,34 +157,27 @@ const Navbar = () => {
                 </div>
 
                 <div className="navbar-bottom bg-[#2785ca] hidden md:block">
-                    <div className="nav-links flex gap-4 lg:gap-6 justify-center py-2 md:py-3 px-4 flex-wrap">
-                        {Links.map((link) => {
-                            const isActive = link.href && (pathname === link.href || pathname.startsWith(link.href + '/'));
-                            const linkClass = `px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm rounded hover:bg-[#1f6ea5] transition-colors ${isActive ? 'bg-[#1f6ea5]' : ''}`;
-                            return (
-                                <div key={link.label} className="group relative">
-                                    {link.href ? (
-                                        <Link href={link.href} className={linkClass}>
-                                            {link.label}
-                                        </Link>
-                                    ) : (
-                                        <a href="#" className={linkClass}>
-                                            {link.label}
-                                        </a>
-                                    )}
-
-                                    {link.sublinks && (
-                                        <div className="absolute left-0 mt-1 hidden group-hover:block bg-white text-[#2785ca] rounded shadow-lg z-10 min-w-36 md:min-w-40">
-                                            {link.sublinks.map(s => (
-                                                <a key={s.label} href={s.href || '#'} className="block px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm hover:bg-gray-100 transition">
-                                                    {s.label}
-                                                </a>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            )
-                        })}
+                    <div className="nav-links flex gap-2 lg:gap-4 justify-center py-2 md:py-3 px-4 flex-wrap">
+                        {categories.length > 0 ? (
+                            categories.map((link) => {
+                                const isActive = link.href && (pathname === link.href || pathname.startsWith(link.href + '/'));
+                                return (
+                                    <Link 
+                                        key={link.category} 
+                                        href={link.href}
+                                        className={`px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium rounded transition-all duration-200 ${
+                                            isActive 
+                                                ? 'bg-white text-[#2785ca] shadow-md' 
+                                                : 'hover:bg-[#1f6ea5] text-white'
+                                        }`}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                )
+                            })
+                        ) : (
+                            <p className='text-white text-sm py-2'>Loading categories...</p>
+                        )}
                     </div>
                 </div>
             </div>
@@ -206,36 +204,37 @@ const Navbar = () => {
 
                     <nav className="px-3 sm:px-4 mt-3 sm:mt-4">
                         <div className="mb-2 sm:mb-3 border border-white">
-                            <button  onClick={() => { setMobileOpen(false); setMobileSearchOpen(true); setSearchTerm(''); setShowSuggestions(false); }} className="w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-sm rounded hover:bg-[#1f6ea5] transition-colors flex items-center gap-2">
+                            <button onClick={() => { setMobileOpen(false); setMobileSearchOpen(true); setSearchTerm(''); setShowSuggestions(false); }} className="w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-sm rounded hover:bg-[#1f6ea5] transition-colors flex items-center gap-2">
                                 <IoSearchSharp className='text-base' />
                                 <span>Search products</span>
                             </button>
                         </div>
-                        {Links.map(link => {
-                            const isActive = link.href && (pathname === link.href || pathname.startsWith(link.href + '/'));
-                            return (
-                                <div key={link.label} className="mb-1 sm:mb-2 font-semibold">
-                                    {link.sublinks ? (
-                                        <>
-                                            <button onClick={() => setOpenSubmenu(openSubmenu === link.label ? null : link.label)} className={`w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-sm rounded hover:bg-[#1f6ea5] transition-colors ${isActive ? 'bg-[#1f6ea5]' : ''}`}>
-                                                {link.label}
-                                            </button>
-                                            <div className={`mt-1 pl-4 ${openSubmenu === link.label ? 'block' : 'hidden'}`}>
-                                                {link.sublinks.map(s => (
-                                                    <a key={s.label} href={s.href || '#'} className="block px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm hover:bg-[#1f6ea5] rounded transition">
-                                                        {s.label}
-                                                    </a>
-                                                ))}
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <Link href={link.href || '#'} onClick={() => setMobileOpen(false)} className={`block px-2 sm:px-3 py-1.5 sm:py-2 text-sm rounded hover:bg-[#1f6ea5] transition-colors ${isActive ? 'bg-[#1f6ea5]' : ''}`}>
+
+                        {/* Categories Section */}
+                        <div className="mt-4 sm:mt-6">
+                            <h3 className='text-xs sm:text-sm font-bold text-white/80 px-2 mb-2'>CATEGORIES</h3>
+                            {categories.length > 0 ? (
+                                categories.map(link => {
+                                    const isActive = link.href && (pathname === link.href || pathname.startsWith(link.href + '/'));
+                                    return (
+                                        <Link
+                                            key={link.category}
+                                            href={link.href}
+                                            onClick={() => setMobileOpen(false)}
+                                            className={`block w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-sm rounded mb-1 transition-colors ${
+                                                isActive
+                                                    ? 'bg-white text-[#2785ca] font-semibold'
+                                                    : 'hover:bg-[#1f6ea5] text-white'
+                                            }`}
+                                        >
                                             {link.label}
                                         </Link>
-                                    )}
-                                </div>
-                            )
-                        })}
+                                    )
+                                })
+                            ) : (
+                                <p className='text-xs sm:text-sm text-white/60 px-2'>Loading categories...</p>
+                            )}
+                        </div>
                     </nav>
                 </aside>
 

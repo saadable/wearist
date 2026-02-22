@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from 'react'
+import { axiosClient } from '@/utils/axiosClient'
 import { FaPaperPlane, FaCheckCircle } from 'react-icons/fa'
 
 const NewsLetter = ({ title = 'Join our Newsletter', subtitle = 'Get the latest deals and product updates.' }) => {
@@ -25,15 +26,13 @@ const NewsLetter = ({ title = 'Join our Newsletter', subtitle = 'Get the latest 
         setStatus('loading')
 
         try {
-            // Save to localStorage as a simple fallback — replace with API call if available
-            const key = 'newsletter_subscribers'
-            const existing = JSON.parse(localStorage.getItem(key) || '[]')
-            if (!existing.includes(email)) {
-                localStorage.setItem(key, JSON.stringify([email, ...existing]))
+            const res = await axiosClient.post('/api/customers/subscriptions', { email })
+            if (res.data && res.data.status === 'success') {
+                setStatus('success')
+                setEmail('')
+            } else {
+                throw new Error('failed')
             }
-
-            setStatus('success')
-            setEmail('')
         } catch (err) {
             setStatus('error')
             setError('Subscription failed. Please try again.')

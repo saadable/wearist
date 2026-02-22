@@ -5,3 +5,12 @@
   --heading-color: #1f51ff;
   --heading2-color: #00ffff;
 }
+
+/* simple fade+scale animation for modals */
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.animate-modalIn {
+  animation: modalIn 0.25s ease-out forwards;
+}

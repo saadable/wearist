@@ -32,21 +32,29 @@ const HotProducts = () => {
         </div>
       ) : (
         <div className='products flex flex-wrap flex-col md:flex-row items-center justify-center gap-4 md:gap-6 lg:gap-8 max-w-6xl mx-auto'>
-          {products.map((product, index) => (
-            <ProductCard
-              key={product._id || product.slug || index}
-              props={{
-                title: product.title,
-                altText: product.title,
-                old_price: product.old_price,
-                new_price: product.new_price,
-                image: product.images?.[0]?.url || product.mainImage,
-                slug: product.slug,
-                rating: product.reviews || 4.5,
-                review_count: product.reviews || 50,
-              }}
-            />
-          ))}
+          {products.map((product, index) => {
+            // compute discount percentage for display
+            const oldp = Number(product.old_price || 0);
+            const newp = Number(product.new_price || 0);
+            const discount = oldp && newp && oldp > newp ? Math.round(((oldp - newp) / oldp) * 100) : 0;
+
+            return (
+              <ProductCard
+                key={product._id || product.slug || index}
+                props={{
+                  title: product.title,
+                  altText: product.title,
+                  old_price: product.old_price,
+                  new_price: product.new_price,
+                  discount,
+                  image: product.images?.[0]?.url || product.mainImage,
+                  slug: product.slug,
+                  rating: product.reviews || 4.5,
+                  review_count: product.reviews || 50,
+                }}
+              />
+            )
+          })}
         </div>
       )}
     </div>

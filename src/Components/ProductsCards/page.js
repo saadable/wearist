@@ -50,6 +50,17 @@ const ProductCard = ({ props }) => {
 
     const displayImage = getDisplayImage()
 
+    // calculate discount percentage if not provided explicitly
+    const computedDiscount = (() => {
+        if (props.discount != null) return props.discount;
+        const oldp = Number(props.old_price || 0);
+        const newp = Number(props.new_price || 0);
+        if (oldp && newp && oldp > newp) {
+            return Math.round(((oldp - newp) / oldp) * 100);
+        }
+        return 0;
+    })();
+
     // Optimize Cloudinary URL for better performance
     const getOptimizedCloudinaryUrl = (url) => {
         if (!url) return null
@@ -152,9 +163,9 @@ const ProductCard = ({ props }) => {
                 </Link>
 
                 {/* Discount Badge */}
-                {props.discount && props.discount > 0 && (
+                {computedDiscount > 0 && (
                     <div className='absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-md text-xs sm:text-sm font-bold shadow-md'>
-                        -{props.discount}%
+                        {computedDiscount}% OFF
                     </div>
                 )}
             </div>

@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import { addToCart } from '@/store/cartSlice'
 import { axiosClient } from '@/utils/axiosClient'
+import ReviewCard from '@/Components/Reviews/ReviewCard'
 
 const ProductDetail = () => {
   const params = useParams()
@@ -169,6 +170,33 @@ const ProductDetail = () => {
 
   const currentImage = displayImages[selectedImageIndex]
 
+  // sample data used for prototype review UI; will be replaced by backend-driven data later
+  const sampleReviews = [
+    {
+      userName: 'Alice',
+      userImage: '',
+      rating: 4.5,
+      comment: 'Great product, fast shipping, highly recommend!'
+    },
+    {
+      userName: 'Bob',
+      userImage: 'https://i.pravatar.cc/150?img=3',
+      rating: 5,
+      comment: 'Exceeded my expectations. Will buy again.'
+    },
+    {
+      userName: 'Charlie',
+      userImage: null,
+      rating: 3,
+      comment: 'It works as advertised but packaging was damaged.'
+    }
+  ];
+
+  const reviewCount = sampleReviews.length;
+  const averageRating = reviewCount
+    ? (sampleReviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1)
+    : null;
+
   return (
     <article className='max-w-6xl mx-auto bg-white border border-[#2785ca] rounded-lg shadow-md p-4 sm:p-6 md:p-8'>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8'>
@@ -231,11 +259,27 @@ const ProductDetail = () => {
             <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-[#2785ca] mb-2'>
               {productData.title}
             </h1>
-            {productData.category && (
-              <p className='text-sm text-gray-500 uppercase tracking-wide font-semibold'>
-                {productData.category}
-              </p>
-            )}
+            {/* metadata row: brand, category, SKU */}
+            <div className='mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-600'>
+              {productData.brand && (
+                <div>
+                  <span className='font-semibold text-gray-800'>Brand:</span>{' '}
+                  {productData.brand}
+                </div>
+              )}
+              {productData.category && (
+                <div>
+                  <span className='font-semibold text-gray-800'>Category:</span>{' '}
+                  {productData.category}
+                </div>
+              )}
+              {productData.sku && (
+                <div>
+                  <span className='font-semibold text-gray-800'>SKU:</span>{' '}
+                  {productData.sku}
+                </div>
+              )}
+            </div>
           </div>
           
           <p className='text-sm sm:text-base text-gray-700 leading-relaxed'>
@@ -317,11 +361,31 @@ const ProductDetail = () => {
             </button>
           </div>
 
-          {/* Additional Info */}
-          {productData.sku && (
-            <div className='pt-4 border-t border-gray-200 text-xs sm:text-sm text-gray-600'>
-              <p><span className='font-semibold'>SKU:</span> {productData.sku}</p>
-            </div>
+        </div>
+      </div>
+
+      {/* Prototype reviews section */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          Customer Reviews
+          {reviewCount > 0 && (
+            <span className="text-base font-medium text-gray-600 ml-2">({reviewCount})</span>
+          )}
+        </h2>
+        {averageRating && (
+          <div className="flex items-center gap-1 text-yellow-400 mb-4">
+            {[1,2,3,4,5].map(i => (
+              <FaStar key={i} className={i <= Math.round(averageRating) ? 'w-5 h-5' : 'w-5 h-5 text-gray-300'} />
+            ))}
+            <span className="ml-2 text-gray-600 text-sm">{averageRating}</span>
+          </div>
+        )}
+        <div className="bg-white rounded-lg shadow-md divide-y divide-gray-200">
+          {sampleReviews.map((rev, idx) => (
+            <ReviewCard key={idx} review={rev} />
+          ))}
+          {!reviewCount && (
+            <p className="p-6 text-center text-gray-600">No reviews yet.</p>
           )}
         </div>
       </div>

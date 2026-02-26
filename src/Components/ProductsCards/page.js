@@ -210,6 +210,7 @@ const ProductCard = ({ props }) => {
                             dispatch(addToCart({
                                 id: props.slug,
                                 ...props,
+                                image: displayImage, // Use the properly extracted image URL for cart display
                             }))
                             setAddedToCart(true)
                             setTimeout(() => setAddedToCart(false), 2000)

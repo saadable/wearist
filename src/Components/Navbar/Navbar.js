@@ -5,10 +5,12 @@ import Logo from '@/Components/Images/Logo.png'
 import Image from 'next/image'
 import { FaCartShopping, FaStar } from "react-icons/fa6";
 import { IoSearchSharp, IoClose } from "react-icons/io5";
+import { BiLoaderAlt } from 'react-icons/bi';
 import Link from 'next/link';
 import { TiThMenu } from "react-icons/ti";
 import { useSelector } from 'react-redux'
 import { useAllProducts } from '@/hooks/useProducts'
+import { axiosClient } from '@/utils/axiosClient'
 
 const Navbar = () => {
     const pathname = usePathname();
@@ -52,34 +54,52 @@ const Navbar = () => {
         };
     }, [mobileOpen]);
 
-    // Debounced suggestions based on search term (desktop only)
+    const [searchLoading, setSearchLoading] = useState(false);
+
+    // Debounced suggestions based on search term (desktop only) - call backend
     useEffect(() => {
-        const handler = setTimeout(() => {
-            const q = (searchTerm || '').trim().toLowerCase();
+        const handler = setTimeout(async () => {
+            const q = (searchTerm || '').trim();
             if (!q) {
                 setSuggestions([]);
+                setShowSuggestions(false);
                 return;
             }
-            const matches = products.filter(p => 
-              p.title?.toLowerCase().includes(q) ||
-              p.category?.toLowerCase().includes(q)
-            );
-            matches.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
-            setSuggestions(matches.slice(0, 5));
-            setShowSuggestions(true);
-        }, 250);
+            setSearchLoading(true);
+            try {
+                const resp = await axiosClient.get('/api/products/search', {
+                    params: { q }
+                });
+                let matches = resp.data?.Result?.products || [];
+                matches.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
+                setSuggestions(matches.slice(0, 6));
+                setShowSuggestions(true);
+            } catch (err) {
+                console.error('search suggestion error', err);
+                setSuggestions([]);
+            } finally {
+                setSearchLoading(false);
+            }
+        }, 300);
         return () => clearTimeout(handler);
     }, [searchTerm]);
 
-    // Close suggestions on outside click
+    // Close suggestions on outside click or Escape
     useEffect(() => {
         const onDocClick = (e) => {
             if (searchRef.current && !searchRef.current.contains(e.target)) {
                 setShowSuggestions(false);
             }
         };
+        const onKey = (e) => {
+            if (e.key === 'Escape') setShowSuggestions(false);
+        };
         document.addEventListener('click', onDocClick);
-        return () => document.removeEventListener('click', onDocClick);
+        window.addEventListener('keydown', onKey);
+        return () => {
+            document.removeEventListener('click', onDocClick);
+            window.removeEventListener('keydown', onKey);
+        };
     }, []);
 
     // Focus mobile search input when overlay opens and show suggestions
@@ -102,41 +122,62 @@ const Navbar = () => {
                             </div>
                         </Link>
                         <div ref={searchRef} className="search-container hidden md:block relative md:-ml-16 lg:-ml-20">
-                            <form onSubmit={(e) => { e.preventDefault(); const q = searchTerm.trim(); if (q) router.push(`/products?query=${encodeURIComponent(q)}`); else router.push('/products'); }} className="search-bar flex border border-white rounded-md md:w-80 lg:w-96 h-9 md:h-10 justify-between items-center">
+                            <form role="search" onSubmit={(e) => { e.preventDefault(); const q = searchTerm.trim(); if (q) { setShowSuggestions(false); router.push(`/products?q=${encodeURIComponent(q)}`); } }} className="search-bar flex border-2 border-white rounded-lg md:w-80 lg:w-96 h-10 md:h-11 justify-between items-center bg-white/5 hover:bg-white/10 transition-colors">
                                 <input
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     onFocus={() => setShowSuggestions(true)}
                                     type="text"
-                                    className='w-full active:border-0 active:outline-none px-3 sm:px-4 py-1 text-xs sm:text-sm outline-none border-none'
+                                    role="searchbox"
+                                    className='w-full px-4 py-2 text-xs sm:text-sm outline-none border-none bg-transparent text-white placeholder-white/60'
                                     placeholder='Search products...'
                                     aria-label='Search products'
+                                    autoComplete='off'
                                 />
-                                <div className="icons bg-[#2785ca] rounded-r-md h-full flex justify-center items-center px-3 sm:px-4">
-                                    <button type='submit' className='text-white text-base sm:text-lg'><IoSearchSharp /></button>
+                                <div className="icons flex items-center px-4 gap-2">
+                                    {searchLoading && <BiLoaderAlt className='animate-spin text-white text-lg' />}
+                                    <button type='submit' className='text-white text-lg hover:text-white/80 transition' aria-label='Submit search'><IoSearchSharp /></button>
                                 </div>
                             </form>
 
-                            {showSuggestions && searchTerm && (
-                                <div className="absolute left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-gray-200 z-50 max-h-72 overflow-auto">
-                                    <ul>
-                                        {suggestions.map(p => (
-                                            <li key={p.slug} className='px-2 sm:px-3 py-2 hover:bg-gray-50 border-b last:border-b-0'>
-                                                <Link href={`/products/${p.slug}`} onClick={() => setShowSuggestions(false)} className='flex items-center gap-2 sm:gap-3'>
-                                                    <Image src={p.image} alt={p.altText || p.title} width={48} height={48} className='w-10 sm:w-12 h-10 sm:h-12 object-cover rounded' />
-                                                    <div className='flex-1 min-w-0'>
-                                                        <div className='text-xs sm:text-sm text-[#2785ca] font-medium line-clamp-1'>{p.title.length > 60 ? `${p.title.slice(0, 60)}...` : p.title}</div>
-                                                        <div className='text-xs text-gray-500 flex items-center gap-1 mt-0.5 sm:mt-1'>
-                                                            <span className='text-yellow-500 flex items-center gap-0.5'><FaStar className='text-xs' /> {p.rating ?? '—'}</span>
-                                                        </div>
-                                                    </div>
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <div className='border-t p-1.5 sm:p-2 text-right'>
-                                        <Link href={`/products?query=${encodeURIComponent(searchTerm)}`} onClick={() => setShowSuggestions(false)} className='text-xs sm:text-sm text-[#2785ca] font-medium'>See all results</Link>
-                                    </div>
+                            {showSuggestions && (searchTerm || searchLoading) && (
+                                <div className="absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-100 z-50 max-h-96 overflow-auto">
+                                    {searchLoading ? (
+                                        <div className='flex items-center justify-center py-6'>
+                                            <BiLoaderAlt className='animate-spin text-[#2785ca] text-2xl' />
+                                        </div>
+                                    ) : suggestions.length > 0 ? (
+                                        <>
+                                            <ul>
+                                                {suggestions.map(p => (
+                                                    <li key={p._id || p.slug} className='border-b last:border-b-0 hover:bg-gray-50 transition'>
+                                                        <Link href={`/products/${p.slug}`} onClick={() => { setShowSuggestions(false); setSearchTerm(''); }} className='flex items-center gap-3 p-3'>
+                                                            {p.images?.[0]?.url || p.image ? (
+                                                                <Image src={p.images?.[0]?.url || p.image} alt={p.title} width={48} height={48} className='w-12 h-12 object-cover rounded' />
+                                                            ) : (
+                                                                <div className='w-12 h-12 bg-gray-200 rounded'></div>
+                                                            )}
+                                                            <div className='flex-1 min-w-0'>
+                                                                <div className='text-sm text-[#2785ca] font-semibold line-clamp-1'>{p.title}</div>
+                                                                <div className='text-xs text-gray-600 flex items-center gap-1 mt-0.5'>
+                                                                    <FaStar className='text-yellow-500 text-xs' />
+                                                                    <span>{(p.reviews || 0).toLocaleString()}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className='text-sm font-bold text-green-600'>PKR {p.new_price?.toLocaleString()}</div>
+                                                        </Link>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <div className='border-t p-2 text-center'>
+                                                <Link href={`/products?q=${encodeURIComponent(searchTerm)}`} onClick={() => { setShowSuggestions(false); setSearchTerm(''); }} className='text-xs sm:text-sm text-[#2785ca] font-semibold hover:text-[#1f6fa8]'>View all {suggestions.length}+ results →</Link>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className='p-6 text-center text-gray-500'>
+                                            <p className='text-sm'>No products found for "{searchTerm}"</p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -242,45 +283,61 @@ const Navbar = () => {
                     <div className="fixed inset-0 z-60 flex items-start justify-center">
                         <div className="fixed inset-0 bg-black/40" onClick={() => setMobileSearchOpen(false)} />
                         <div className="relative mt-16 sm:mt-20 w-full px-4">
-                            <div className="mx-auto max-w-lg bg-white rounded-lg shadow-lg p-3 sm:p-4 border border-gray-200">
-                                <div className='flex items-center w-full gap-1 sm:gap-2'>
+                            <div className="mx-auto max-w-lg bg-white rounded-xl shadow-2xl p-4 sm:p-5 border-2 border-[#2785ca]">
+                                <div className='flex items-center w-full gap-2'>
                                     <input
                                         ref={mobileSearchInputRef}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        placeholder='Search...'
-                                        className='w-full px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-black border border-blue-600 rounded-l focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
+                                        placeholder='Search products...'
+                                        className='w-full px-4 py-2.5 text-sm text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2785ca] focus:border-transparent'
                                         aria-label='Search products'
+                                        autoComplete='off'
                                     />
-                                    <button onClick={() => { const q = searchTerm.trim(); if (q) router.push(`/products?query=${encodeURIComponent(q)}`); else router.push('/products'); setMobileSearchOpen(false); }} className='bg-[#2785ca] px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-white rounded-r hover:bg-[#1f6fa8] transition-colors font-semibold'>Search</button>
-                                    {/* <button className='p-2 text-black' onClick={() => setMobileSearchOpen(false)} aria-label='Close search'><IoClose /></button> */}
+                                    <button onClick={() => { const q = searchTerm.trim(); if (q) { setShowSuggestions(false); router.push(`/products?q=${encodeURIComponent(q)}`); } else router.push('/products'); setMobileSearchOpen(false); }} className='bg-[#2785ca] px-4 py-2.5 text-sm text-white rounded-lg hover:bg-[#1f6fa8] transition-colors font-semibold flex items-center gap-2'>{searchLoading ? <BiLoaderAlt className='animate-spin' /> : <IoSearchSharp />}</button>
                                 </div>
 
-                                <div className='mt-2 sm:mt-3 max-h-72 overflow-auto'>
-                                    {searchTerm ? (
+                                <div className='mt-3 max-h-80 overflow-auto'>
+                                    {searchLoading && searchTerm ? (
+                                        <div className='flex items-center justify-center py-6'>
+                                            <BiLoaderAlt className='animate-spin text-[#2785ca] text-2xl' />
+                                        </div>
+                                    ) : searchTerm && suggestions.length > 0 ? (
                                         <ul>
                                             {suggestions.map(p => (
-                                                <li key={p.slug} className='px-2 py-1.5 sm:py-2 border-b last:border-b-0'>
-                                                    <Link href={`/products/${p.slug}`} onClick={() => setMobileSearchOpen(false)} className='flex items-center gap-2 sm:gap-3'>
-                                                        <Image src={p.image} alt={p.altText || p.title} width={48} height={48} className='w-10 sm:w-12 h-10 sm:h-12 object-cover rounded' />
+                                                <li key={p._id || p.slug} className='px-3 py-2 border-b last:border-b-0 hover:bg-gray-50 transition'>
+                                                    <Link href={`/products/${p.slug}`} onClick={() => { setMobileSearchOpen(false); setSearchTerm(''); }} className='flex items-center gap-3'>
+                                                        {p.images?.[0]?.url || p.image ? (
+                                                            <Image src={p.images?.[0]?.url || p.image} alt={p.title} width={48} height={48} className='w-12 h-12 object-cover rounded' />
+                                                        ) : (
+                                                            <div className='w-12 h-12 bg-gray-200 rounded'></div>
+                                                        )}
                                                         <div className='flex-1 min-w-0'>
-                                                            <div className='text-xs sm:text-sm text-[#2785ca] font-medium line-clamp-1'>{p.title.length > 60 ? `${p.title.slice(0, 60)}...` : p.title}</div>
-                                                            <div className='text-xs text-gray-500 flex items-center gap-1 mt-0.5'>
-                                                                <span className='text-yellow-500 flex items-center gap-0.5'><FaStar className='text-xs' /> {p.rating ?? '—'}</span>
+                                                            <div className='text-sm font-semibold text-[#2785ca] line-clamp-1'>{p.title}</div>
+                                                            <div className='text-xs text-gray-600 flex items-center gap-1 mt-0.5'>
+                                                                <FaStar className='text-yellow-500' />
+                                                                <span>{(p.reviews || 0).toLocaleString()}</span>
                                                             </div>
                                                         </div>
+                                                        <div className='text-sm font-bold text-green-600'>PKR {p.new_price?.toLocaleString()}</div>
                                                     </Link>
                                                 </li>
                                             ))}
                                         </ul>
+                                    ) : searchTerm && !searchLoading ? (
+                                        <div className='p-4 text-center text-gray-500'>
+                                            <p className='text-sm'>No products found for "{searchTerm}"</p>
+                                        </div>
                                     ) : (
-                                        <p className='text-xs sm:text-sm text-gray-500 px-2'>Try searching for "AirPods"</p>
+                                        <p className='text-xs sm:text-sm text-gray-500 px-3 py-4'>Try searching for "AirPods" or "Headphones"</p>
                                     )}
                                 </div>
 
-                                <div className='mt-2 sm:mt-3 text-right'>
-                                    <Link href={`/products?query=${encodeURIComponent(searchTerm)}`} onClick={() => setMobileSearchOpen(false)} className='text-xs sm:text-sm text-[#2785ca] font-medium'>See all results</Link>
-                                </div>
+                                {searchTerm && suggestions.length > 0 && (
+                                    <div className='mt-3 pt-2 border-t text-center'>
+                                        <Link href={`/products?q=${encodeURIComponent(searchTerm)}`} onClick={() => { setMobileSearchOpen(false); setSearchTerm(''); }} className='text-sm text-[#2785ca] font-semibold hover:text-[#1f6fa8]'>View all results →</Link>
+                                    </div>
+                                )}
 
                             </div>
                         </div>

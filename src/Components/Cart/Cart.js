@@ -14,6 +14,41 @@ const Cart = () => {
 
   const hasOutOfStock = (items || []).some(i => i && (i.stock === false || i.stock === 'false'))
 
+  // Helper function to extract image URL from various formats
+  const getCartImageUrl = (item) => {
+    // If item.image is a string (URL), use it directly
+    if (typeof item.image === 'string' && item.image.length > 0) {
+      return item.image;
+    }
+    
+    // If item.image is an array, get the first element's URL
+    if (Array.isArray(item.image) && item.image.length > 0) {
+      const firstImg = item.image[0];
+      // If it's a string, return it
+      if (typeof firstImg === 'string') return firstImg;
+      // If it's an object with src (Next.js Image), return src
+      if (firstImg?.src) return firstImg.src;
+      // If it's an object with url (from backend), return url
+      if (firstImg?.url) return firstImg.url;
+      return firstImg;
+    }
+    
+    // If item.images exists (backend format), use it
+    if (Array.isArray(item.images) && item.images.length > 0) {
+      const firstImg = item.images[0];
+      if (typeof firstImg === 'string') return firstImg;
+      if (firstImg?.url) return firstImg.url;
+      return firstImg;
+    }
+    
+    // Fallback to mainImage if available
+    if (typeof item.mainImage === 'string') return item.mainImage;
+    if (item.mainImage?.src) return item.mainImage.src;
+    
+    return null;
+  }
+
+
   if (!Array.isArray(items) || items.length === 0) {
     return (
       <div className='max-w-4xl mx-auto px-4 py-8 sm:py-12 text-center'>
@@ -37,13 +72,19 @@ const Cart = () => {
             >
               {/* Product Image - Left Side */}
               <div className='shrink-0 w-16 h-16 md:w-[150px] md:h-auto rounded-md overflow-hidden border border-gray-200 bg-gray-50'>
-                <Image
-                  src={Array.isArray(item.image) ? item.image[0] : item.image}
-                  alt={item.title}
-                  width={1000}
-                  height={1000}
-                  className='w-full md:w-full md:h-auto  h-full '
-                />
+                {getCartImageUrl(item) ? (
+                  <Image
+                    src={getCartImageUrl(item)}
+                    alt={item.title}
+                    width={1000}
+                    height={1000}
+                    className='w-full md:w-full md:h-auto h-full object-cover'
+                  />
+                ) : (
+                  <div className='w-full h-full bg-gray-300 flex items-center justify-center text-gray-500 text-xs font-semibold'>
+                    No Image
+                  </div>
+                )}
               </div>
 
               {/* Product Details */}

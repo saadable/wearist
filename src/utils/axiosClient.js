@@ -16,6 +16,41 @@ export const axiosClient = axios.create(
     }
 )
 
+// simple loader callback mechanism; components can register to receive boolean
+let onLoadingChange = null
+let pendingRequests = 0
+
+const notifyLoading = () => {
+    if (typeof onLoadingChange === 'function') {
+        onLoadingChange(pendingRequests > 0)
+    }
+}
+
+export const registerLoadingCallback = (fn) => {
+    onLoadingChange = fn
+}
+
+// attach interceptors to track request count
+axiosClient.interceptors.request.use(cfg => {
+    pendingRequests += 1
+    notifyLoading()
+    return cfg
+}, err => {
+    pendingRequests = Math.max(0, pendingRequests - 1)
+    notifyLoading()
+    return Promise.reject(err)
+})
+
+axiosClient.interceptors.response.use(res => {
+    pendingRequests = Math.max(0, pendingRequests - 1)
+    notifyLoading()
+    return res
+}, err => {
+    pendingRequests = Math.max(0, pendingRequests - 1)
+    notifyLoading()
+    return Promise.reject(err)
+})
+
 // Response interceptor: try to refresh access token on 401 and retry once
 // let isRefreshing = false
 // let failedQueue = []

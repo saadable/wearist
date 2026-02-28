@@ -3,6 +3,8 @@ import "./globals.css";
 import Navbar from "@/Components/Navbar/Navbar";
 import Footer from "@/Components/Footer/page";
 import { Providers } from "./providers";
+import Loader from '@/Components/Loader';
+import InitialContent from '@/Components/InitialContent';
 
 export const metadata = {
   title: "Wearist",
@@ -15,7 +17,9 @@ export default function RootLayout({ children }) {
       <body className="bg-[#1a1a1a] text-white">
         <Providers>
           <Navbar />
-          {children}
+          <Loader />
+          {/* prevent rendering of page content until first backend activity finishes */}
+          <InitialContent>{children}</InitialContent>
           <Footer />
         </Providers>
       </body>

@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import store from '@/store/store'
+import { LoadingProvider } from '@/contexts/LoadingContext'
 
 function CartPersistence() {
   const dispatch = useDispatch()
@@ -33,8 +34,10 @@ function CartPersistence() {
 export function Providers({ children }) {
   return (
     <Provider store={store}>
-      <CartPersistence />
-      {children}
+      <LoadingProvider>
+        <CartPersistence />
+        {children}
+      </LoadingProvider>
     </Provider>
   )
 }

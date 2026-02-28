@@ -68,7 +68,8 @@ const Navbar = () => {
             setSearchLoading(true);
             try {
                 const resp = await axiosClient.get('/api/products/search', {
-                    params: { q }
+                    params: { q },
+                    skipGlobalLoading: true // navbar handles its own spinner
                 });
                 let matches = resp.data?.Result?.products || [];
                 matches.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));

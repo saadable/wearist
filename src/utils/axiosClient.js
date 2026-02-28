@@ -32,22 +32,31 @@ export const registerLoadingCallback = (fn) => {
 
 // attach interceptors to track request count
 axiosClient.interceptors.request.use(cfg => {
-    pendingRequests += 1
-    notifyLoading()
+    // allow caller to skip global loading overlay
+    if (!cfg.skipGlobalLoading) {
+        pendingRequests += 1
+        notifyLoading()
+    }
     return cfg
 }, err => {
-    pendingRequests = Math.max(0, pendingRequests - 1)
-    notifyLoading()
+    if (!err.config?.skipGlobalLoading) {
+        pendingRequests = Math.max(0, pendingRequests - 1)
+        notifyLoading()
+    }
     return Promise.reject(err)
 })
 
 axiosClient.interceptors.response.use(res => {
-    pendingRequests = Math.max(0, pendingRequests - 1)
-    notifyLoading()
+    if (!res.config?.skipGlobalLoading) {
+        pendingRequests = Math.max(0, pendingRequests - 1)
+        notifyLoading()
+    }
     return res
 }, err => {
-    pendingRequests = Math.max(0, pendingRequests - 1)
-    notifyLoading()
+    if (!err.config?.skipGlobalLoading) {
+        pendingRequests = Math.max(0, pendingRequests - 1)
+        notifyLoading()
+    }
     return Promise.reject(err)
 })
 

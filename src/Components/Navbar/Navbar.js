@@ -257,6 +257,16 @@ const Navbar = () => {
                             </button>
                         </div>
 
+                        <div className="mb-2 sm:mb-3">
+                            <Link
+                                href={'/all-products'}
+                                onClick={() => setMobileOpen(false)}
+                                className={`block w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-sm rounded transition-colors ${pathname === '/all-products' ? 'bg-white text-[#2785ca] font-semibold' : 'hover:bg-[#1f6ea5] text-white'}`}
+                            >
+                                All Products
+                            </Link>
+                        </div>
+
                         {/* Categories Section */}
                         <div className="mt-4 sm:mt-6">
                             <h3 className='text-xs sm:text-sm font-bold text-white/80 px-2 mb-2'>CATEGORIES</h3>

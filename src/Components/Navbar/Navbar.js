@@ -199,7 +199,12 @@ const Navbar = () => {
                 </div>
 
                 <div className="navbar-bottom bg-[#2785ca] hidden md:block">
-                    <div className="nav-links flex gap-2 lg:gap-4 justify-center py-2 md:py-3 px-4 flex-wrap">
+                    <div className="nav-links flex gap-2 lg:gap-4 items-center justify-center py-2 md:py-3 px-4 flex-wrap">
+                        <ul>
+                            <Link href={'/all-products'} className={`px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium rounded transition-all duration-200 ${pathname === '/all-products' ? 'bg-white text-[#2785ca] shadow-md' : 'hover:bg-[#1f6ea5] text-white'}`}>
+                                All Products
+                            </Link>
+                        </ul>
                         {categories.length > 0 ? (
                             categories.map((link) => {
                                 const isActive = link.href && (pathname === link.href || pathname.startsWith(link.href + '/'));

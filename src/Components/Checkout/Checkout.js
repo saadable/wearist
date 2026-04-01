@@ -176,7 +176,7 @@ const Checkout = () => {
             <p className='text-xs sm:text-sm text-gray-600'><strong>Total Amount:</strong> <span className='font-semibold text-green-600'>PKR {orderTotal.toFixed(2)}</span></p>
             <p className='text-xs sm:text-sm text-gray-600'><strong>Payment Method:</strong> {paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod === 'bank' ? 'Bank Transfer' : paymentMethod === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'}</p>
           </div>
-          <Link href='/products' className='inline-block bg-[#2785ca] text-white px-6 py-2 rounded-md font-semibold text-sm sm:text-base'>
+          <Link href='/all-products' className='inline-block bg-[#2785ca] text-white px-6 py-2 rounded-md font-semibold text-sm sm:text-base'>
             Continue Shopping
           </Link>
         </div>
@@ -318,7 +318,7 @@ const Checkout = () => {
               </label>
 
               {/* Bank Transfer */}
-              <label className='flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[#2785ca] hover:bg-blue-50 transition-all'>
+              {/* <label className='flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[#2785ca] hover:bg-blue-50 transition-all'>
                 <input
                   type='radio'
                   name='payment'
@@ -332,10 +332,10 @@ const Checkout = () => {
                   <p className='font-semibold text-sm sm:text-base text-gray-800'>Bank Transfer</p>
                   <p className='text-xs sm:text-sm text-gray-600'>Direct bank account transfer</p>
                 </div>
-              </label>
+              </label> */}
 
               {/* EasyPaisa */}
-              <label className='flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[#2785ca] hover:bg-blue-50 transition-all'>
+              {/* <label className='flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[#2785ca] hover:bg-blue-50 transition-all'>
                 <input
                   type='radio'
                   name='payment'
@@ -349,10 +349,10 @@ const Checkout = () => {
                   <p className='font-semibold text-sm sm:text-base text-gray-800'>EasyPaisa</p>
                   <p className='text-xs sm:text-sm text-gray-600'>Mobile wallet payment</p>
                 </div>
-              </label>
+              </label> */}
 
               {/* JazzCash */}
-              <label className='flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[#2785ca] hover:bg-blue-50 transition-all'>
+              {/* <label className='flex items-center p-3 sm:p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-[#2785ca] hover:bg-blue-50 transition-all'>
                 <input
                   type='radio'
                   name='payment'
@@ -366,11 +366,11 @@ const Checkout = () => {
                   <p className='font-semibold text-sm sm:text-base text-gray-800'>JazzCash</p>
                   <p className='text-xs sm:text-sm text-gray-600'>Mobile wallet payment</p>
                 </div>
-              </label>
+              </label> */}
             </div>
 
             {/* Payment Details (show based on selection) */}
-            {paymentMethod === 'bank' && (
+            {/* {paymentMethod === 'bank' && (
               <div className='mt-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg'>
                 <p className='text-xs sm:text-sm text-gray-700 mb-2'><strong>Bank Account Details:</strong></p>
                 <p className='text-xs sm:text-sm text-gray-700'>Account Holder: Wearist Store</p>
@@ -394,7 +394,7 @@ const Checkout = () => {
                 <p className='text-xs sm:text-sm text-gray-700'>Send payment to: 0300-XXXXXX</p>
                 <p className='text-xs sm:text-sm text-yellow-600 mt-2'><strong>Note:</strong> Include your order ID in the transfer reference</p>
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Place Order Button - Inside Form */}

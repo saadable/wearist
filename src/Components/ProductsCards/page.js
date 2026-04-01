@@ -3,6 +3,11 @@ import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { FaStar } from "react-icons/fa6";
+
+const capitalize = (value) => {
+  if (typeof value !== 'string' || value.length === 0) return value
+  return value.charAt(0).toUpperCase() + value.slice(1)
+}
 import { FaStarHalfAlt, FaHeart, FaRegHeart } from "react-icons/fa";
 import { useDispatch } from 'react-redux'
 import { addToCart } from '@/store/cartSlice'
@@ -60,6 +65,19 @@ const ProductCard = ({ props }) => {
         }
         return 0;
     })();
+
+    const inStock = (() => {
+        const stockValue = props.stock ?? props.inStock ?? props.available ?? props.quantity ?? props.qty
+        if (stockValue == null) return true
+        if (stockValue === false || stockValue === 'false' || stockValue === 0 || stockValue === '0') return false
+        if (typeof stockValue === 'string') {
+            const normalized = stockValue.toLowerCase().trim()
+            if (normalized === 'outofstock' || normalized === 'out of stock' || normalized === 'out' || normalized === 'unavailable') return false
+            if (normalized === 'in stock' || normalized === 'instock' || normalized === 'available' || normalized === 'true') return true
+        }
+        if (typeof stockValue === 'number') return stockValue > 0
+        return Boolean(stockValue)
+    })()
 
     // Optimize Cloudinary URL for better performance
     const getOptimizedCloudinaryUrl = (url) => {
@@ -122,12 +140,12 @@ const ProductCard = ({ props }) => {
     };
 
     return (
-        <div className='product-card flex flex-col items-center gap-2 sm:gap-3 p-2 border border-[#2785ca] bg-white rounded-lg sm:rounded-[10px] shadow-md hover:shadow-xl transition-all duration-300 w-[250px] h-auto'>
+        <div className='product-card flex flex-col items-center gap-2 sm:gap-3 p-2 border border-[#2785ca] bg-white rounded-lg sm:rounded-[10px] shadow-md hover:shadow-xl transition-all duration-300 w-[250px] h-[400px]'>
             {/* Image Section */}
             <div className="image relative w-full sm:w-[250px] h-[250px] sm:h-[250px] overflow-hidden rounded-md flex items-center justify-center bg-gray-50 group">
                 {/* Skeleton Loading */}
                 {imageLoading && !imageError && (
-                    <div className='absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse'></div>
+                    <div className='absolute inset-0 bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse'></div>
                 )}
 
                 {/* Wishlist Button */}
@@ -142,7 +160,7 @@ const ProductCard = ({ props }) => {
                 </button>
 
                 {/* Product Link with Image */}
-                <Link href={`/products/${slug}`} className='block w-full h-full overflow-hidden'>
+                <Link href={`/products/${slug}`} className='block w-full h-[300px] overflow-hidden'>
                     {optimizedImage && !imageError ? (
                         <img
                             src={optimizedImage}
@@ -171,7 +189,24 @@ const ProductCard = ({ props }) => {
             </div>
 
             {/* Product Details Section */}
-            <div className='product-details flex flex-col items-start gap-1.5 sm:gap-2 w-full flex-1'>
+            <div className='product-details flex flex-col items-start gap-1 sm:gap-2 w-full flex-1'>
+                <div className='flex flex-wrap items-center gap-2 '>
+                    {props.brand && (
+                        <span className='rounded-full bg-[#2785ca]/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#0f4e87]'>
+                            {props.brand}
+                        </span>
+                    )}
+                    {props.category && (
+                        <span className='rounded-full bg-slate-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600'>
+                            {capitalize(props.category)}
+                        </span>
+                    )}
+                </div>
+                <div className='pb-1'>
+                    <span className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${inStock ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                        {inStock ? 'In stock' : 'Out of stock'}
+                    </span>
+                </div>
                 {/* Title */}
                 <h1 className='font-bold text-xs sm:text-sm md:text-base text-gray-800 line-clamp-2 hover:text-[#2785ca] transition-colors'>
                     <Link href={`/products/${slug}`}>{props.title}</Link>
@@ -207,6 +242,7 @@ const ProductCard = ({ props }) => {
                 <div className="cart-b w-full mt-auto">
                     <button 
                         onClick={() => {
+                            if (!inStock) return
                             dispatch(addToCart({
                                 id: props.slug,
                                 ...props,
@@ -215,13 +251,16 @@ const ProductCard = ({ props }) => {
                             setAddedToCart(true)
                             setTimeout(() => setAddedToCart(false), 2000)
                         }}
+                        disabled={!inStock}
                         className={`w-full px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold rounded transition-all duration-200 ${
                             addedToCart 
                                 ? 'bg-green-600 text-white' 
-                                : 'bg-[#2785ca] text-white hover:bg-[#1f6fa8] active:scale-95'
+                                : inStock
+                                    ? 'bg-[#2785ca] text-white hover:bg-[#1f6fa8] active:scale-95'
+                                    : 'bg-slate-300 text-slate-600 cursor-not-allowed'
                         }`}
                     >
-                        {addedToCart ? '✓ Added' : 'Add to Cart'}
+                        {addedToCart ? '✓ Added' : inStock ? 'Add to Cart' : 'Out of Stock'}
                     </button>
                 </div>
             </div>

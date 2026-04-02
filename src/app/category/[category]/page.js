@@ -26,6 +26,24 @@ const CategoryProductsPage = () => {
       .join(' ')
   }, [categorySlug])
 
+  const categoryQuote = useMemo(() => {
+    const key = categorySlug?.toLowerCase() || ''
+    switch (key) {
+      case 'electronics':
+        return 'Empower your everyday with premium electronics that combine performance, precision, and enduring style.'
+      case 'airpods':
+        return 'Experience audio freedom with thoughtfully crafted earbuds that deliver immersive sound and effortless comfort.'
+      case 'headphones':
+        return 'Listen with confidence—our headphones are engineered for powerful clarity, rich bass, and exceptional comfort.'
+      case 'smartwatch':
+        return 'Stay connected and active with smartwatches designed for modern life, productivity, and elegant wearability.'
+      case 'accessories':
+        return 'Complete every setup with premium accessories that enhance convenience, style, and everyday use.'
+      default:
+        return `Discover the best of ${displayCategoryName} with a curated selection built for quality, performance, and lasting value.`
+    }
+  }, [categorySlug, displayCategoryName])
+
   const brands = useMemo(
     () => [...new Set(products.map(p => p.brand?.trim()).filter(Boolean))].sort(),
     [products]
@@ -150,12 +168,12 @@ const CategoryProductsPage = () => {
     <main className='max-w-7xl mx-auto px-4 py-6 sm:py-8 md:py-12'>
       <header className='mb-8 md:mb-12'>
         <div className='flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between'>
-          <div>
+          <div className="text-center md:text-left">
             <h1 className='text-3xl sm:text-4xl font-semibold text-[#2785ca] mb-2'>
               {displayCategoryName}
             </h1>
             <p className='text-sm sm:text-base text-white'>
-              Curated {displayCategoryName.toLowerCase()} products with refined filters for faster discovery.
+              {categoryQuote}
             </p>
           </div>
           <div className='flex flex-wrap items-center gap-3'>
@@ -169,19 +187,19 @@ const CategoryProductsPage = () => {
         </div>
       </header>
 
-      <div className='mb-6 flex items-center justify-between gap-3 xl:hidden'>
-        <p className='text-sm text-slate-500'>Filter products instantly on this category page.</p>
+      <div className='md:mb-6 flex items-center justify-between gap-3 xl:hidden'>
+        {/* <p className='text-sm text-slate-500'>Filter products instantly on this category page.</p> */}
         <button
           type='button'
           onClick={() => setMobileFiltersOpen(prev => !prev)}
-          className='rounded-2xl bg-[#2785ca] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#1f5c93]'
+          className='rounded-[10px] bg-[#2785ca] w-full px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#1f5c93]'
         >
           {mobileFiltersOpen ? 'Hide filters' : 'Show filters'}
         </button>
       </div>
 
-      <div className='grid grid-cols-1 gap-8 xl:grid-cols-[320px_minmax(0,1fr)]'>
-        <aside className={`rounded-[10px] border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] ${mobileFiltersOpen ? 'block' : 'hidden'} xl:block xl:sticky xl:top-6 xl:self-start`}>
+      <div className='grid grid-cols-1 md:gap-8 xl:grid-cols-[320px_minmax(0,1fr)]'>
+        <aside className={`rounded-[10px] border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] overflow-hidden transition-all duration-300 ease-out ${mobileFiltersOpen ? 'max-h-[1600px] my-5 opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95'} xl:max-h-full xl:opacity-100 xl:scale-100 xl:block xl:sticky xl:top-6 xl:self-start`}>
           <div className='flex items-center justify-between gap-4 mb-6 relative'>
             <div>
               <p className='text-sm uppercase tracking-[0.2em] text-slate-400'>Filter products</p>

@@ -115,8 +115,16 @@ const Footer = () => {
                 {adminInfo.phone || '+1 234 567 890'}
               </a>
             </li>
-            <li className="hover:text-white transition">Shipping & Returns</li>
-            <li className="hover:text-white transition">Privacy Policy</li>
+            <li>
+              <Link href="/shipping-and-returns" className="hover:text-white transition underline-offset-4 hover:underline">
+                Shipping & Returns
+              </Link>
+            </li>
+            <li>
+              <Link href="/privacy-policy" className="hover:text-white transition underline-offset-4 hover:underline">
+                Privacy Policy
+              </Link>
+            </li>
           </ul>
         </div>
 

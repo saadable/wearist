@@ -176,27 +176,27 @@ const AllProducts = () => {
             <span className='inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm'>
               {filteredProducts.length} / {products.length} results
             </span>
-            <span className='inline-flex rounded-full bg-[#2785ca]/10 px-4 py-2 text-sm font-medium text-[#0f4e87]'>
+            <span className='inline-flex rounded-full bg-[#2785ca]/10 px-4 py-2 text-sm font-medium text-white'>
               {selectedCategories.length ? `${selectedCategories.length} categories` : 'All categories'}
             </span>
           </div>
         </div>
       </header>
 
-      <div className='mb-6 flex items-center justify-between gap-3 xl:hidden'>
-        <p className='text-sm text-slate-500'>Tap to open filters and refine products instantly.</p>
+      <div className='md:mb-6 flex items-center justify-between gap-3 xl:hidden'>
+        {/* <p className='text-sm text-slate-500'>Tap to open filters and refine products instantly.</p> */}
         <button
           type='button'
           onClick={() => setMobileFiltersOpen(prev => !prev)}
-          className='rounded-2xl bg-[#2785ca] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#1f5c93]'
+          className='rounded-[10px] w-full bg-[#2785ca] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#1f5c93]'
         >
           {mobileFiltersOpen ? 'Hide filters' : 'Show filters'}
         </button>
       </div>
 
-      <div className='grid grid-cols-1 gap-8 xl:grid-cols-[320px_minmax(0,1fr)]'>
-        <aside className={`rounded-[10px] border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] ${mobileFiltersOpen ? 'block' : 'hidden'} xl:block xl:sticky xl:top-6 xl:self-start`}>
-          <div className='flex items-center justify-between gap-4 mb-6 relative'>
+      <div className='grid grid-cols-1 md:gap-8 xl:grid-cols-[320px_minmax(0,1fr)]'>
+        <aside className={`rounded-[10px] border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] overflow-hidden transition-all duration-300 ease-out ${mobileFiltersOpen ? 'max-h-[2000px] my-5 opacity-100 scale-100' : 'max-h-0 opacity-0 scale-[0.98]'} xl:max-h-none xl:opacity-100 xl:scale-100 xl:sticky xl:top-6 xl:self-start`}>
+          <div className='flex items-center justify-between gap-4 md:mb-6 relative'>
             <div>
               <p className='text-sm uppercase tracking-[0.2em] text-slate-400'>Filter your results</p>
               <h2 className='text-xl font-semibold text-slate-900'>Refined Selection</h2>

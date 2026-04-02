@@ -274,7 +274,7 @@ const ProductsList = ({ initialQuery = '' }) => {
               <div className='mb-4 flex items-center justify-between'>
                 <div>
                   <p className='text-sm font-semibold text-slate-900'>Price range</p>
-                  <p className='text-xs text-slate-500'>Instant results while you adjust</p>
+                  {/* <p className='text-xs text-slate-500'>Instant results while you adjust</p> */}
                 </div>
                 <span className='text-sm font-semibold text-slate-900'>PKR {priceRange.min?.toLocaleString() || 0} - PKR {priceRange.max?.toLocaleString() || 0}</span>
               </div>
@@ -327,7 +327,7 @@ const ProductsList = ({ initialQuery = '' }) => {
         </aside>
 
         <section>
-          <div className='mb-6 flex flex-col gap-3 rounded-[10px] border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)]'>
+          <div className='mb-6 flex flex-col gap-3 rounded-[10px] border border-slate-200 bg-white p-3 shadow-[0_24px_80px_rgba(15,23,42,0.08)]'>
             <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
               <div>
                 <h2 className='text-lg font-semibold text-slate-900'>Search Results</h2>
@@ -347,7 +347,7 @@ const ProductsList = ({ initialQuery = '' }) => {
             ) : error ? (
               <span className='text-red-600'>Error: {error}</span>
             ) : (
-              <span className='text-gray-700'>{filteredProducts.length} result{filteredProducts.length !== 1 ? 's' : ''} found</span>
+              <span className='text-white font-bold'><span className="text-[#2785ca] font-bold">{filteredProducts.length}</span> Result{filteredProducts.length !== 1 ? 's' : ''} Found</span>
             )}
           </div>
 

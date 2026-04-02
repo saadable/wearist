@@ -22,7 +22,7 @@ const HotProducts = () => {
 
   return (
     <div className='px-4 py-6 sm:py-8 md:py-12'>
-      <h1 className='text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#2785ca] mb-6 md:mb-8 lg:mb-10'>
+      <h1 className='text-center text-[25px] md:text-[40px] font-extrabold text-[#2785ca] mb-6 md:mb-8 lg:mb-10'>
         Hot Products
       </h1>
 

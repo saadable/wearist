@@ -4,6 +4,7 @@ import HomeCategories from './HomeCategories/HomeCategories'
 import SaleBanner from './SaleBanner/SaleBanner'
 import HotProducts from './HotProducts/page'
 import NewsLetter from './NewsLetter/page'
+import GoogleMap from './GoogleMap/page'
 
 const HomePage = () => {
   return (
@@ -13,6 +14,7 @@ const HomePage = () => {
       <SaleBanner/>
       <HomeCategories/>
       <NewsLetter/>
+      <GoogleMap/>
     </div>
   )
 }

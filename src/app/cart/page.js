@@ -15,7 +15,7 @@ export const metadata = {
   openGraph: {
     title: 'Shopping Cart - Review Your Audio Gear | Wearist',
     description: 'Review your selected premium audio products. Update quantities and proceed to secure checkout.',
-    url: 'https://wearist.store/cart',
+    url: 'https://www.wearist.store/cart',
     siteName: 'Wearist',
     type: 'website',
     images: [

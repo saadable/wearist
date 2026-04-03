@@ -8,7 +8,8 @@ import { IoSearchSharp, IoClose } from "react-icons/io5";
 import { BiLoaderAlt } from 'react-icons/bi';
 import Link from 'next/link';
 import { TiThMenu } from "react-icons/ti";
-import { FiGrid, FiHeadphones, FiSpeaker, FiSmartphone, FiWatch, FiPackage } from "react-icons/fi";
+import { FiGrid, FiHeadphones, FiSpeaker, FiSmartphone, FiWatch, FiPackage, FiShield, FiTruck } from "react-icons/fi";
+import { GiBilledCap } from "react-icons/gi";
 import { MdOutlineCategory } from "react-icons/md";
 import { useSelector } from 'react-redux'
 import { useAllProducts } from '@/hooks/useProducts'
@@ -115,14 +116,38 @@ const Navbar = () => {
 
     const Links = categories
 
-    // Function to get appropriate icon for category
+    // Function to get appropriate icon for category/navbar item
     const getCategoryIcon = (category) => {
-        const cat = category.toLowerCase();
-        if (cat.includes('headphone') || cat.includes('earphone')) return <FiHeadphones className="w-5 h-5" />;
-        if (cat.includes('speaker') || cat.includes('audio')) return <FiSpeaker className="w-5 h-5" />;
-        if (cat.includes('phone') || cat.includes('mobile')) return <FiSmartphone className="w-5 h-5" />;
-        if (cat.includes('watch') || cat.includes('wearable')) return <FiWatch className="w-5 h-5" />;
-        return <FiPackage className="w-5 h-5" />;
+        const cat = (category || '').toLowerCase();
+
+        const iconMap = {
+            airpods: <FiHeadphones className="w-5 h-5" />,
+            headphone: <FiHeadphones className="w-5 h-5" />,
+            headphones: <FiHeadphones className="w-5 h-5" />,
+            speaker: <FiSpeaker className="w-5 h-5" />,
+            speakers: <FiSpeaker className="w-5 h-5" />,
+            audio: <FiSpeaker className="w-5 h-5" />,
+            phone: <FiSmartphone className="w-5 h-5" />,
+            mobile: <FiSmartphone className="w-5 h-5" />,
+            watch: <FiWatch className="w-5 h-5" />,
+            wearable: <FiWatch className="w-5 h-5" />,
+            electronics: <FiGrid className="w-5 h-5" />,
+            hats: <GiBilledCap className="w-5 h-5" />,
+            hat: <GiBilledCap className="w-5 h-5" />,
+            default: <FiPackage className="w-5 h-5" />
+        };
+
+        if (cat in iconMap) return iconMap[cat];
+
+        // Fallback keyword matching for partial words
+        if (cat.includes('headphone') || cat.includes('airpod') || cat.includes('earbud')) return iconMap.headphones;
+        if (cat.includes('speaker') || cat.includes('audio')) return iconMap.speaker;
+        if (cat.includes('phone') || cat.includes('mobile')) return iconMap.phone;
+        if (cat.includes('watch') || cat.includes('wearable')) return iconMap.watch;
+        if (cat.includes('electronic')) return iconMap.electronics;
+        if (cat.includes('hat') || cat.includes('hats')) return iconMap.hats;
+
+        return iconMap.default;
     };
 
     return (
@@ -334,7 +359,7 @@ const Navbar = () => {
                                                             ? 'bg-white/30'
                                                             : 'bg-white/15 group-hover:bg-white/25'
                                                     }`}>
-                                                        {getCategoryIcon(link.label)}
+                                                        {getCategoryIcon(link.category)}
                                                     </div>
                                                     <div className="text-left flex-1">
                                                         <div className={`font-medium transition-colors ${
@@ -364,20 +389,36 @@ const Navbar = () => {
 
                             {/* Footer Links */}
                             <div className="mt-8 pt-6 border-t border-white/20">
-                                <div className="grid grid-cols-1 gap-3">
+                                <div className="flex items-center gap-2 mb-4 px-2">
+                                    <FiPackage className="w-4 h-4 text-white/70" />
+                                    <h3 className='text-sm font-bold text-white/90 uppercase tracking-wide'>Support</h3>
+                                </div>
+                                <div className="space-y-2">
                                     <Link
                                         href="/privacy-policy"
                                         onClick={() => setMobileOpen(false)}
-                                        className="text-xs text-white/70 hover:text-white transition-colors px-2 py-2 rounded-lg hover:bg-white/5"
+                                        className="group w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:bg-white/15 hover:border-white/20 transition-all duration-200 flex items-center gap-3 block"
                                     >
-                                        Privacy Policy
+                                        <div className="p-2 bg-white/15 rounded-lg group-hover:bg-white/25 transition-colors">
+                                            <FiShield className='text-lg text-white' />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="font-medium text-white/95">Privacy Policy</div>
+                                            <div className="text-xs text-white/60">Your data protection rights</div>
+                                        </div>
                                     </Link>
                                     <Link
                                         href="/shipping-and-returns"
                                         onClick={() => setMobileOpen(false)}
-                                        className="text-xs text-white/70 hover:text-white transition-colors px-2 py-2 rounded-lg hover:bg-white/5"
+                                        className="group w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:bg-white/15 hover:border-white/20 transition-all duration-200 flex items-center gap-3 block"
                                     >
-                                        Shipping & Returns
+                                        <div className="p-2 bg-white/15 rounded-lg group-hover:bg-white/25 transition-colors">
+                                            <FiTruck className='text-lg text-white' />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="font-medium text-white/95">Shipping & Returns</div>
+                                            <div className="text-xs text-white/60">Delivery and return information</div>
+                                        </div>
                                     </Link>
                                 </div>
                             </div>

@@ -99,6 +99,8 @@ const Footer = () => {
             <li><Link href="#" className="hover:text-white transition">Headphones</Link></li>
             <li><Link href="#" className="hover:text-white transition">Watches</Link></li>
             <li><Link href="#" className="hover:text-white transition">Accessories</Link></li>
+            <li><Link href="/sitemap.xml" className="hover:text-white transition underline-offset-2 hover:underline">Sitemap</Link></li>
+            <li><Link href="/category-wise" className="hover:text-white transition underline-offset-2 hover:underline">Category Sitemap</Link></li>
           </ul>
         </div>
 

@@ -196,123 +196,146 @@ const AllProductsClient = () => {
 
       <div className='grid grid-cols-1 md:gap-8 xl:grid-cols-[320px_minmax(0,1fr)]'>
         <aside className={`rounded-[10px] border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] overflow-hidden transition-all duration-300 ease-out ${mobileFiltersOpen ? 'max-h-[2000px] my-5 opacity-100 scale-100' : 'max-h-0 opacity-0 scale-[0.98]'} xl:max-h-none xl:opacity-100 xl:scale-100 xl:sticky xl:top-6 xl:self-start`}>
-          <div className='flex items-center justify-between gap-4 md:mb-6 relative'>
+          <div className='flex items-center justify-between gap-4 mb-6 relative'>
             <div>
-              <h2 className='text-lg font-semibold text-slate-900'>Filters</h2>
-              <p className='text-sm text-slate-500'>Refine your search to find the perfect product.</p>
+              <p className='text-sm uppercase tracking-[0.2em] text-slate-400'>Filter products</p>
+              <h2 className='text-xl font-bold text-slate-900'>All Products</h2>
             </div>
             <button
               type='button'
               onClick={clearFilters}
-              className='rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-200'
+              className='rounded-[10px] absolute right-0 top-6 w-[100px] border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900'
             >
-              Clear all
+              Clear Filters
             </button>
           </div>
 
           <div className='space-y-6'>
             <div>
-              <label htmlFor='search' className='block text-sm font-medium text-slate-700 mb-2'>
-                Search products
-              </label>
+              <label className='mb-3 block text-sm font-semibold text-slate-700'>Search products</label>
               <input
                 id='search'
-                type='text'
-                placeholder='Type to search...'
+                type='search'
+                placeholder='Search by name, brand, description...'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className='w-full rounded-[8px] border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm transition focus:border-[#2785ca] focus:outline-none focus:ring-1 focus:ring-[#2785ca]'
+                className='w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#2785ca] focus:ring-2 focus:ring-[#2785ca]/20'
               />
             </div>
 
-            <div>
-              <label className='block text-sm font-medium text-slate-700 mb-2'>Categories</label>
-              <div className='space-y-2 max-h-40 overflow-y-auto'>
-                {categories.map(category => (
-                  <label key={category} className='flex items-center gap-2'>
-                    <input
-                      type='checkbox'
-                      checked={selectedCategories.includes(category)}
-                      onChange={() => toggleSelection(category, selectedCategories, setSelectedCategories)}
-                      className='rounded border-slate-300 text-[#2785ca] focus:ring-[#2785ca]'
-                    />
-                    <span className='text-sm text-slate-600'>{capitalize(category)}</span>
-                  </label>
+            <div className='rounded-[22px] border border-slate-200 bg-slate-50 p-4'>
+              <div className='mb-4 flex items-center justify-between'>
+                <p className='text-sm font-bold text-slate-900'>Categories</p>
+                <span className='text-xs text-slate-500'>{selectedCategories.length || 'All'}</span>
+              </div>
+              <div className='max-h-56 space-y-3 overflow-y-auto pr-2'>
+                {categories.length > 0 ? (
+                  categories.map(category => (
+                    <label key={category} className='inline-flex w-full cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-[#2785ca]'>
+                      <input
+                        type='checkbox'
+                        checked={selectedCategories.includes(category)}
+                        onChange={() => toggleSelection(category, selectedCategories, setSelectedCategories)}
+                        className='h-4 w-4 accent-[#2785ca]'
+                      />
+                      <span>{capitalize(category)}</span>
+                    </label>
+                  ))
+                ) : (
+                  <p className='text-sm text-slate-500'>No categories available</p>
+                )}
+              </div>
+            </div>
+
+            <div className='rounded-[22px] border border-slate-200 bg-slate-50 p-4'>
+              <div className='mb-4 flex items-center justify-between'>
+                <p className='text-sm font-bold text-slate-900'>Brands</p>
+                <span className='text-xs text-slate-500'>{selectedBrands.length || 'All'}</span>
+              </div>
+              <div className='max-h-56 space-y-3 overflow-y-auto pr-2'>
+                {brands.length > 0 ? (
+                  brands.map(brand => (
+                    <label key={brand} className='inline-flex w-full cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-[#2785ca]'>
+                      <input
+                        type='checkbox'
+                        checked={selectedBrands.includes(brand)}
+                        onChange={() => toggleSelection(brand, selectedBrands, setSelectedBrands)}
+                        className='h-4 w-4 accent-[#2785ca]'
+                      />
+                      <span>{capitalize(brand)}</span>
+                    </label>
+                  ))
+                ) : (
+                  <p className='text-sm text-slate-500'>No brands available</p>
+                )}
+              </div>
+            </div>
+
+            <div className='rounded-[22px] border border-slate-200 bg-slate-50 p-4'>
+              <p className='mb-4 text-sm font-bold text-slate-900'>Ratings</p>
+              <div className='grid grid-cols-2 gap-3'>
+                {[4, 3, 2, 1].map(value => (
+                  <button
+                    key={value}
+                    type='button'
+                    onClick={() => setSelectedRating(selectedRating === value ? 0 : value)}
+                    className={`rounded-2xl border px-3 py-2 text-sm font-medium transition ${selectedRating === value ? 'border-[#2785ca] bg-[#2785ca] text-white shadow-sm' : 'border-slate-200 bg-white text-slate-700 hover:border-[#2785ca]'}`}
+                  >
+                    {value}+ stars
+                  </button>
                 ))}
               </div>
             </div>
 
-            <div>
-              <label className='block text-sm font-medium text-slate-700 mb-2'>Brands</label>
-              <div className='space-y-2 max-h-40 overflow-y-auto'>
-                {brands.map(brand => (
-                  <label key={brand} className='flex items-center gap-2'>
-                    <input
-                      type='checkbox'
-                      checked={selectedBrands.includes(brand)}
-                      onChange={() => toggleSelection(brand, selectedBrands, setSelectedBrands)}
-                      className='rounded border-slate-300 text-[#2785ca] focus:ring-[#2785ca]'
-                    />
-                    <span className='text-sm text-slate-600'>{capitalize(brand)}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className='block text-sm font-medium text-slate-700 mb-2'>Minimum Rating</label>
-              <select
-                value={selectedRating}
-                onChange={(e) => setSelectedRating(Number(e.target.value))}
-                className='w-full rounded-[8px] border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-[#2785ca] focus:outline-none focus:ring-1 focus:ring-[#2785ca]'
-              >
-                <option value={0}>Any rating</option>
-                <option value={1}>1+ stars</option>
-                <option value={2}>2+ stars</option>
-                <option value={3}>3+ stars</option>
-                <option value={4}>4+ stars</option>
-                <option value={5}>5 stars</option>
-              </select>
-            </div>
-
-            <div>
-              <label className='block text-sm font-medium text-slate-700 mb-2'>Price Range</label>
-              <div className='space-y-3'>
-                <div className='flex gap-2'>
-                  <input
-                    type='number'
-                    placeholder='Min'
-                    value={priceInputs.min}
-                    onChange={(e) => handlePriceInput('min', e.target.value)}
-                    className='w-full rounded-[8px] border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-[#2785ca] focus:outline-none focus:ring-1 focus:ring-[#2785ca]'
-                  />
-                  <input
-                    type='number'
-                    placeholder='Max'
-                    value={priceInputs.max}
-                    onChange={(e) => handlePriceInput('max', e.target.value)}
-                    className='w-full rounded-[8px] border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-[#2785ca] focus:outline-none focus:ring-1 focus:ring-[#2785ca]'
-                  />
+            <div className='rounded-[22px] border border-slate-200 bg-slate-50 p-4'>
+              <div className='mb-4 flex items-center justify-between'>
+                <div>
+                  <p className='text-sm font-bold text-slate-900'>Price Range</p>
                 </div>
-                <input
-                  type='range'
-                  min={minPrice}
-                  max={maxPrice}
-                  value={priceRange.min}
-                  onChange={(e) => handleRangeChange('min', e.target.value)}
-                  className='w-full'
-                />
-                <input
-                  type='range'
-                  min={minPrice}
-                  max={maxPrice}
-                  value={priceRange.max}
-                  onChange={(e) => handleRangeChange('max', e.target.value)}
-                  className='w-full'
-                />
-                <div className='flex justify-between text-xs text-slate-500'>
-                  <span>${priceRange.min}</span>
-                  <span>${priceRange.max}</span>
+                <span className='text-[12px] font-semibold text-slate-900 mt-1'>PKR {normalizedPriceRange.min.toLocaleString()} - PKR {normalizedPriceRange.max.toLocaleString()}</span>
+              </div>
+              <div className='grid gap-3'>
+                <div className='grid grid-cols-2 gap-3'>
+                  <label className='space-y-1'>
+                    <span className='text-xs text-slate-500'>Min</span>
+                    <input
+                      type='number'
+                      value={priceInputs.min}
+                      min={minPrice}
+                      max={maxPrice}
+                      onChange={(e) => handlePriceInput('min', e.target.value)}
+                      className='w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none'
+                    />
+                  </label>
+                  <label className='space-y-1'>
+                    <span className='text-xs text-slate-500'>Max</span>
+                    <input
+                      type='number'
+                      value={priceInputs.max}
+                      min={minPrice}
+                      max={maxPrice}
+                      onChange={(e) => handlePriceInput('max', e.target.value)}
+                      className='w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none'
+                    />
+                  </label>
+                </div>
+                <div className='space-y-3'>
+                  <input
+                    type='range'
+                    min={minPrice}
+                    max={maxPrice}
+                    value={priceRange.min}
+                    onChange={(e) => handleRangeChange('min', e.target.value)}
+                    className='w-full accent-[#2785ca]'
+                  />
+                  <input
+                    type='range'
+                    min={minPrice}
+                    max={maxPrice}
+                    value={priceRange.max}
+                    onChange={(e) => handleRangeChange('max', e.target.value)}
+                    className='w-full accent-[#2785ca]'
+                  />
                 </div>
               </div>
             </div>

@@ -8,6 +8,8 @@ import { IoSearchSharp, IoClose } from "react-icons/io5";
 import { BiLoaderAlt } from 'react-icons/bi';
 import Link from 'next/link';
 import { TiThMenu } from "react-icons/ti";
+import { FiGrid, FiHeadphones, FiSpeaker, FiSmartphone, FiWatch, FiPackage } from "react-icons/fi";
+import { MdOutlineCategory } from "react-icons/md";
 import { useSelector } from 'react-redux'
 import { useAllProducts } from '@/hooks/useProducts'
 import { axiosClient } from '@/utils/axiosClient'
@@ -112,6 +114,17 @@ const Navbar = () => {
     }, [mobileSearchOpen, searchTerm]);
 
     const Links = categories
+
+    // Function to get appropriate icon for category
+    const getCategoryIcon = (category) => {
+        const cat = category.toLowerCase();
+        if (cat.includes('headphone') || cat.includes('earphone')) return <FiHeadphones className="w-5 h-5" />;
+        if (cat.includes('speaker') || cat.includes('audio')) return <FiSpeaker className="w-5 h-5" />;
+        if (cat.includes('phone') || cat.includes('mobile')) return <FiSmartphone className="w-5 h-5" />;
+        if (cat.includes('watch') || cat.includes('wearable')) return <FiWatch className="w-5 h-5" />;
+        return <FiPackage className="w-5 h-5" />;
+    };
+
     return (
         <div>
             <div className="nav  text-white font-bold">
@@ -237,62 +250,139 @@ const Navbar = () => {
                 />
 
                 {/* Sliding panel (from left) */}
-                <aside className={`fixed top-0 left-0 h-full w-full  bg-[#2785ca] text-white z-50 transform transition-transform duration-300 ease-in-out ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                    <div className="p-3 sm:p-4 flex items-center justify-between">
+                <aside className={`fixed top-0 left-0 h-full w-full bg-[#1a1a1a] from-[#2785ca] via-[#1f6ea5] to-[#1a5a8a] text-white z-50 transform transition-transform duration-300 ease-in-out ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                    <div className="p-4 sm:p-5 flex items-center justify-between border-b border-white/20">
                         <Link href={'/'} onClick={() => setMobileOpen(false)}>
                             <div className="logo">
                                 <Image src={Logo} alt='Logo Image' width={600} height={600} className='w-28 sm:w-32' />
                             </div>
                         </Link>
-                        <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="text-white p-1.5 sm:p-2">
+                        <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="text-white p-2 rounded-full hover:bg-white/10 transition-colors">
                             <IoClose className='text-xl sm:text-2xl' />
                         </button>
                     </div>
 
-                    <nav className="px-3 sm:px-4 mt-3 sm:mt-4">
-                        <div className="mb-2 sm:mb-3 border border-white">
-                            <button onClick={() => { setMobileOpen(false); setMobileSearchOpen(true); setSearchTerm(''); setShowSuggestions(false); }} className="w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-sm rounded hover:bg-[#1f6ea5] transition-colors flex items-center gap-2">
-                                <IoSearchSharp className='text-base' />
-                                <span>Search products</span>
-                            </button>
-                        </div>
+                    <div className="flex-1 overflow-y-auto">
+                        <nav className="px-4 sm:px-5 py-6">
+                            {/* Search Button */}
+                            <div className="mb-4">
+                                <button
+                                    onClick={() => { setMobileOpen(false); setMobileSearchOpen(true); setSearchTerm(''); setShowSuggestions(false); }}
+                                    className="w-full group bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/20 hover:border-white/30 transition-all duration-200 flex items-center gap-3"
+                                >
+                                    <div className="p-2 bg-white/20 rounded-lg group-hover:bg-white/30 transition-colors">
+                                        <IoSearchSharp className='text-lg text-white' />
+                                    </div>
+                                    <div className="text-left">
+                                        <div className="font-semibold text-white">Search Products</div>
+                                        <div className="text-xs text-white/70">Find your perfect audio gear</div>
+                                    </div>
+                                </button>
+                            </div>
 
-                        <div className="mb-2 sm:mb-3">
-                            <Link
-                                href={'/all-products'}
-                                onClick={() => setMobileOpen(false)}
-                                className={`block w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-sm rounded transition-colors ${pathname === '/all-products' ? 'bg-white text-[#2785ca] font-semibold' : 'hover:bg-[#1f6ea5] text-white'}`}
-                            >
-                                All Products
-                            </Link>
-                        </div>
+                            {/* All Products */}
+                            <div className="mb-6">
+                                <Link
+                                    href={'/all-products'}
+                                    onClick={() => setMobileOpen(false)}
+                                    className={`group w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/20 hover:border-white/30 transition-all duration-200 flex items-center gap-3 block ${
+                                        pathname === '/all-products' ? 'bg-white/20 border-white/40 shadow-lg' : ''
+                                    }`}
+                                >
+                                    <div className={`p-2 rounded-lg transition-colors ${
+                                        pathname === '/all-products'
+                                            ? 'bg-white/30'
+                                            : 'bg-white/20 group-hover:bg-white/30'
+                                    }`}>
+                                        <FiGrid className='text-lg text-white' />
+                                    </div>
+                                    <div className="text-left">
+                                        <div className={`font-semibold transition-colors ${
+                                            pathname === '/all-products' ? 'text-white' : 'text-white'
+                                        }`}>All Products</div>
+                                        <div className="text-xs text-white/70">Browse our complete collection</div>
+                                    </div>
+                                    {pathname === '/all-products' && (
+                                        <div className="ml-auto">
+                                            <div className="w-2 h-2 bg-[#2785ca] rounded-full"></div>
+                                        </div>
+                                    )}
+                                </Link>
+                            </div>
 
-                        {/* Categories Section */}
-                        <div className="mt-4 sm:mt-6">
-                            <h3 className='text-xs sm:text-sm font-bold text-white/80 px-2 mb-2'>CATEGORIES</h3>
-                            {categories.length > 0 ? (
-                                categories.map(link => {
-                                    const isActive = link.href && (pathname === link.href || pathname.startsWith(link.href + '/'));
-                                    return (
-                                        <Link
-                                            key={link.category}
-                                            href={link.href}
-                                            onClick={() => setMobileOpen(false)}
-                                            className={`block w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 text-sm rounded mb-1 transition-colors ${
-                                                isActive
-                                                    ? 'bg-white text-[#2785ca] font-semibold'
-                                                    : 'hover:bg-[#1f6ea5] text-white'
-                                            }`}
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    )
-                                })
-                            ) : (
-                                <p className='text-xs sm:text-sm text-white/60 px-2'>Loading categories...</p>
-                            )}
-                        </div>
-                    </nav>
+                            {/* Categories Section */}
+                            <div>
+                                <div className="flex items-center gap-2 mb-4 px-2">
+                                    <MdOutlineCategory className="w-4 h-4 text-white/70" />
+                                    <h3 className='text-sm font-bold text-white/90 uppercase tracking-wide'>Categories</h3>
+                                </div>
+                                <div className="space-y-2">
+                                    {categories.length > 0 ? (
+                                        categories.map(link => {
+                                            const isActive = link.href && (pathname === link.href || pathname.startsWith(link.href + '/'));
+                                            return (
+                                                <Link
+                                                    key={link.category}
+                                                    href={link.href}
+                                                    onClick={() => setMobileOpen(false)}
+                                                    className={`group w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:bg-white/15 hover:border-white/20 transition-all duration-200 flex items-center gap-3 block ${
+                                                        isActive ? 'bg-white/20 border-white/30 shadow-lg' : ''
+                                                    }`}
+                                                >
+                                                    <div className={`p-2 rounded-lg transition-colors ${
+                                                        isActive
+                                                            ? 'bg-white/30'
+                                                            : 'bg-white/15 group-hover:bg-white/25'
+                                                    }`}>
+                                                        {getCategoryIcon(link.label)}
+                                                    </div>
+                                                    <div className="text-left flex-1">
+                                                        <div className={`font-medium transition-colors ${
+                                                            isActive ? 'text-white font-semibold' : 'text-white/95'
+                                                        }`}>{link.label}</div>
+                                                        <div className="text-xs text-white/60">Explore {link.label.toLowerCase()}</div>
+                                                    </div>
+                                                    {isActive && (
+                                                        <div className="ml-auto">
+                                                            <div className="w-2 h-2 bg-[#2785ca] rounded-full"></div>
+                                                        </div>
+                                                    )}
+                                                </Link>
+                                            )
+                                        })
+                                    ) : (
+                                        <div className="px-4 py-8 text-center">
+                                            <div className="animate-pulse">
+                                                <div className="h-4 bg-white/20 rounded w-3/4 mx-auto mb-2"></div>
+                                                <div className="h-3 bg-white/10 rounded w-1/2 mx-auto"></div>
+                                            </div>
+                                            <p className='text-xs text-white/50 mt-3'>Loading categories...</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Footer Links */}
+                            <div className="mt-8 pt-6 border-t border-white/20">
+                                <div className="grid grid-cols-1 gap-3">
+                                    <Link
+                                        href="/privacy-policy"
+                                        onClick={() => setMobileOpen(false)}
+                                        className="text-xs text-white/70 hover:text-white transition-colors px-2 py-2 rounded-lg hover:bg-white/5"
+                                    >
+                                        Privacy Policy
+                                    </Link>
+                                    <Link
+                                        href="/shipping-and-returns"
+                                        onClick={() => setMobileOpen(false)}
+                                        className="text-xs text-white/70 hover:text-white transition-colors px-2 py-2 rounded-lg hover:bg-white/5"
+                                    >
+                                        Shipping & Returns
+                                    </Link>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
                 </aside>
 
                 {mobileSearchOpen && (

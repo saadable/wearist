@@ -203,7 +203,7 @@ const CategoryProductsPage = () => {
           <div className='flex items-center justify-between gap-4 mb-6 relative'>
             <div>
               <p className='text-sm uppercase tracking-[0.2em] text-slate-400'>Filter products</p>
-              <h2 className='text-xl font-semibold text-slate-900'>Category filters</h2>
+              <h2 className='text-xl font-bold text-slate-900'>Category Filters</h2>
             </div>
             <button
               type='button'

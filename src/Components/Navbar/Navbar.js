@@ -275,15 +275,15 @@ const Navbar = () => {
                 />
 
                 {/* Sliding panel (from left) */}
-                <aside className={`fixed top-0 left-0 h-full w-full bg-[#1a1a1a] from-[#2785ca] via-[#1f6ea5] to-[#1a5a8a] text-white z-50 transform transition-transform duration-300 ease-in-out ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <aside className={`fixed overflow-y-scroll top-0 left-0 h-full w-full bg-[#1a1a1a] from-[#2785ca] via-[#1f6ea5] to-[#1a5a8a] text-white z-50 transform transition-transform duration-300 ease-in-out ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                     <div className="p-4 sm:p-5 flex items-center justify-between border-b border-white/20">
                         <Link href={'/'} onClick={() => setMobileOpen(false)}>
                             <div className="logo">
                                 <Image src={Logo} alt='Logo Image' width={600} height={600} className='w-28 sm:w-32' />
                             </div>
                         </Link>
-                        <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="text-white p-2 rounded-full hover:bg-white/10 transition-colors">
-                            <IoClose className='text-xl sm:text-2xl' />
+                        <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="text-white p-2 rounded-full font-bold hover:bg-white/10 transition-colors">
+                            <IoClose className='text-xl sm:text-2xl font-bold' />
                         </button>
                     </div>
 

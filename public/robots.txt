@@ -1,4 +1,14 @@
+# *
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /checkout
+Disallow: /cart
 
+# Host
+Host: https://wearist.store
+
+# Sitemaps
 Sitemap: https://wearist.store/sitemap.xml
+Sitemap: https://wearist.store/server-sitemap.xml

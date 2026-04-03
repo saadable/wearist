@@ -1,44 +1,124 @@
-export default function sitemap() {
-  return [
+import { axiosClient } from '@/utils/axiosClient';
+
+export default async function sitemap() {
+  const baseUrl = process.env.SITE_URL || 'https://wearist.store';
+
+  // Static pages
+  const staticPages = [
     {
-      url: 'https://wearist.store/',
+      url: `${baseUrl}/`,
       lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 1.0,
     },
     {
-      url: 'https://wearist.store/all-products',
+      url: `${baseUrl}/all-products`,
       lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
     },
     {
-      url: 'https://wearist.store/cart',
+      url: `${baseUrl}/cart`,
       lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.3,
     },
     {
-      url: 'https://wearist.store/categories',
+      url: `${baseUrl}/category-wise`,
       lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
     },
     {
-      url: 'https://wearist.store/category-wise',
+      url: `${baseUrl}/checkout`,
       lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.3,
     },
     {
-      url: 'https://wearist.store/checkout',
+      url: `${baseUrl}/headphones`,
       lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     {
-      url: 'https://wearist.store/example-products',
+      url: `${baseUrl}/products`,
       lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     {
-      url: 'https://wearist.store/headphones',
+      url: `${baseUrl}/airpods`,
       lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     {
-      url: 'https://wearist.store/products',
+      url: `${baseUrl}/privacy-policy`,
       lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.4,
     },
     {
-      url: 'https://wearist.store/airpods',
+      url: `${baseUrl}/shipping-and-returns`,
       lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.4,
     },
-  ]
+  ];
+
+  // Dynamic category pages
+  const categoryPages = [];
+  try {
+    // Fetch categories from backend
+    const categoriesResponse = await axiosClient.get('/api/products/categories');
+    if (categoriesResponse.data?.categories) {
+      categoriesResponse.data.categories.forEach(category => {
+        categoryPages.push({
+          url: `${baseUrl}/category/${category.toLowerCase()}`,
+          lastModified: new Date(),
+          changeFrequency: 'weekly',
+          priority: 0.8,
+        });
+      });
+    }
+  } catch (error) {
+    console.warn('Error fetching categories for sitemap:', error);
+    // Fallback to known categories
+    const fallbackCategories = ['electronics', 'headphones', 'airpods', 'speakers', 'watches', 'mobile', 'phone'];
+    fallbackCategories.forEach(category => {
+      categoryPages.push({
+        url: `${baseUrl}/category/${category}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.8,
+      });
+    });
+  }
+
+  // Dynamic product pages
+  const productPages = [];
+  try {
+    // Fetch products from backend
+    const productsResponse = await axiosClient.get('/api/products', {
+      params: { limit: 1000 } // Get all products for sitemap
+    });
+
+    if (productsResponse.data?.products) {
+      productsResponse.data.products.forEach(product => {
+        if (product.slug) {
+          productPages.push({
+            url: `${baseUrl}/products/${product.slug}`,
+            lastModified: new Date(product.updatedAt || product.createdAt || Date.now()),
+            changeFrequency: 'weekly',
+            priority: 0.6,
+          });
+        }
+      });
+    }
+  } catch (error) {
+    console.warn('Error fetching products for sitemap:', error);
+  }
+
+  return [...staticPages, ...categoryPages, ...productPages];
 }

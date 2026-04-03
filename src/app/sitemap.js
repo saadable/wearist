@@ -1,7 +1,7 @@
 import { axiosClient } from '@/utils/axiosClient';
 
 export default async function sitemap() {
-  const baseUrl = process.env.SITE_URL || 'https://wearist.store';
+  const baseUrl = process.env.SITE_URL || 'https://www.wearist.store';
 
   // Static pages
   const staticPages = [

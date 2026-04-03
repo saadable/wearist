@@ -5,6 +5,7 @@ import Footer from "@/Components/Footer/page";
 import { Providers } from "./providers";
 import Loader from '@/Components/Loader';
 import InitialContent from '@/Components/InitialContent';
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata = {
   metadataBase: new URL('https://www.wearist.store'),
@@ -76,6 +77,7 @@ export default function RootLayout({ children }) {
           <InitialContent>{children}</InitialContent>
           <Footer />
         </Providers>
+        <Analytics />
       </body>
       
     </html>

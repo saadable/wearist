@@ -1,6 +1,51 @@
 export const metadata = {
-  title: 'Privacy Policy - Wearist',
-  description: 'Read Wearist privacy practices, data collection, security, and customer privacy commitments.',
+  title: 'Privacy Policy - Data Protection & Security | Wearist',
+  description: 'Learn how Wearist protects your privacy and handles your personal data. Read our comprehensive privacy policy covering data collection, usage, security, and your rights.',
+  keywords: [
+    'privacy policy',
+    'data protection',
+    'privacy practices',
+    'data security',
+    'Wearist privacy',
+    'customer data',
+    'GDPR compliance',
+    'data rights'
+  ],
+  openGraph: {
+    title: 'Privacy Policy - Data Protection & Security | Wearist',
+    description: 'Learn how Wearist protects your privacy and handles your personal data with industry-standard security measures.',
+    url: 'https://wearist.store/privacy-policy',
+    siteName: 'Wearist',
+    type: 'website',
+    images: [
+      {
+        url: 'https://wearist.store/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Wearist privacy policy',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Privacy Policy - Data Protection & Security | Wearist',
+    description: 'Learn how Wearist protects your privacy and handles your personal data.',
+    images: ['https://wearist.store/og-image.png'],
+  },
+  alternates: {
+    canonical: 'https://wearist.store/privacy-policy',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 }
 
 export default function PrivacyPolicyPage() {

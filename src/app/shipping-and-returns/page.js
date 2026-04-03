@@ -1,6 +1,51 @@
 export const metadata = {
-  title: 'Shipping & Returns - Wearist',
-  description: 'Review Wearist shipping timelines, delivery policies, and our returns process for a seamless shopping experience.',
+  title: 'Shipping & Returns Policy - Fast Delivery & Easy Returns | Wearist',
+  description: 'Learn about Wearist shipping options, delivery times, and hassle-free returns policy. Free shipping on orders over $50 with 60-day return window.',
+  keywords: [
+    'shipping policy',
+    'returns policy',
+    'delivery times',
+    'free shipping',
+    'Wearist shipping',
+    'return process',
+    'shipping costs',
+    'delivery tracking'
+  ],
+  openGraph: {
+    title: 'Shipping & Returns Policy - Fast Delivery & Easy Returns | Wearist',
+    description: 'Learn about Wearist shipping options, delivery times, and hassle-free returns policy.',
+    url: 'https://wearist.store/shipping-and-returns',
+    siteName: 'Wearist',
+    type: 'website',
+    images: [
+      {
+        url: 'https://wearist.store/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Wearist shipping and returns',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Shipping & Returns Policy - Fast Delivery & Easy Returns | Wearist',
+    description: 'Learn about Wearist shipping options, delivery times, and hassle-free returns policy.',
+    images: ['https://wearist.store/og-image.png'],
+  },
+  alternates: {
+    canonical: 'https://wearist.store/shipping-and-returns',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 }
 
 export default function ShippingAndReturnsPage() {

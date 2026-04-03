@@ -7,8 +7,8 @@ Disallow: /checkout
 Disallow: /cart
 
 # Host
-Host: https://wearist.store
+Host: https://www.wearist.store
 
 # Sitemaps
-Sitemap: https://wearist.store/sitemap.xml
-Sitemap: https://wearist.store/server-sitemap.xml
+Sitemap: https://www.wearist.store/sitemap.xml
+Sitemap: https://www.wearist.store/server-sitemap.xml

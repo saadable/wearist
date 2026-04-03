@@ -1,6 +1,8 @@
 /** @type {import('next-sitemap').IConfig} */
+const axios = require('axios');
+
 module.exports = {
-  siteUrl: process.env.SITE_URL || 'https://wearist.store',
+  siteUrl: process.env.SITE_URL || 'https://www.wearist.store',
   generateRobotsTxt: true,
   sitemapSize: 7000,
   changefreq: 'daily',
@@ -15,18 +17,16 @@ module.exports = {
       },
     ],
     additionalSitemaps: [
-      `${process.env.SITE_URL || 'https://wearist.store'}/server-sitemap.xml`,
+      `${process.env.SITE_URL || 'https://www.wearist.store'}/server-sitemap.xml`,
     ],
   },
-  // Exclude certain paths
   exclude: ['/admin/*', '/api/*', '/checkout', '/cart', '/test-api'],
-  // Transform function for dynamic priority and changefreq
   transform: async (config, path) => {
-    // Custom priority for different page types
     const pathPriority = {
       '/': 1.0,
       '/all-products': 0.9,
       '/products': 0.8,
+      '/product': 0.8,
       '/airpods': 0.8,
       '/headphones': 0.8,
       '/category-wise': 0.7,
@@ -36,6 +36,7 @@ module.exports = {
       '/': 'daily',
       '/all-products': 'daily',
       '/products': 'weekly',
+      '/product': 'weekly',
       '/airpods': 'weekly',
       '/headphones': 'weekly',
       '/category-wise': 'weekly',
@@ -48,25 +49,38 @@ module.exports = {
       lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
     };
   },
-  // Additional paths to include
   additionalPaths: async (config) => {
     const result = [];
 
-    // Add category pages dynamically
-    try {
-      // Since we can't make API calls in build time, we'll add known categories
-      const categories = ['electronics', 'headphones', 'airpods', 'speakers', 'watches', 'mobile', 'phone'];
+    // static category pages
+    const categories = ['electronics', 'headphones', 'airpods', 'speakers', 'watches', 'mobile', 'phone'];
+    categories.forEach(category => {
+      result.push({
+        loc: `/category/${category}`,
+        changefreq: 'weekly',
+        priority: 0.8,
+        lastmod: new Date().toISOString(),
+      });
+    });
 
-      categories.forEach(category => {
-        result.push({
-          loc: `/category/${category}`,
-          changefreq: 'weekly',
-          priority: 0.8,
-          lastmod: new Date().toISOString(),
-        });
+    // dynamic product pages via backend API
+    try {
+      const apiBase = process.env.API_BASE_URL || 'https://www.wearist.store';
+      const response = await axios.post(`${apiBase}/api/products/all-products`);
+      const products = response.data?.Result?.products || response.data?.products || [];
+
+      products.forEach((product) => {
+        if (product?.slug) {
+          result.push({
+            loc: `/product/${product.slug}`,
+            changefreq: 'weekly',
+            priority: 0.65,
+            lastmod: product.updatedAt || product.createdAt || new Date().toISOString(),
+          });
+        }
       });
     } catch (error) {
-      console.warn('Error generating category sitemaps:', error);
+      console.warn('Error adding dynamic products to sitemap:', error?.message || error);
     }
 
     return result;

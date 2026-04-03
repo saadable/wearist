@@ -7,7 +7,7 @@ import Loader from '@/Components/Loader';
 import InitialContent from '@/Components/InitialContent';
 
 export const metadata = {
-  metadataBase: new URL('https://wearist.store'),
+  metadataBase: new URL('https://www.wearist.store'),
   title: {
     default: 'Wearist | Premium Tech Accessories & Smart Electronics',
     template: '%s | Wearist',
@@ -31,13 +31,13 @@ export const metadata = {
     title: 'Wearist | Premium Tech Accessories & Smart Electronics',
     description:
       'Discover the latest trending tech accessories, from wireless earbuds and smartwatches to gaming headphones and everyday electronics.',
-    url: 'https://wearist.store',
+    url: 'https://www.wearist.store',
     siteName: 'Wearist',
     type: 'website',
     locale: 'en_US',
     images: [
       {
-        url: 'https://wearist.store/og-image.png',
+        url: 'https://www.wearist.store/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Wearist premium tech accessories and electronics',
@@ -50,7 +50,7 @@ export const metadata = {
     description:
       'Shop trending tech accessories, wireless earbuds, smartwatches, gaming headphones, and premium gadgets at Wearist.',
     creator: '@wearist',
-    images: ['https://wearist.store/og-image.png'],
+    images: ['https://www.wearist.store/og-image.png'],
   },
   robots: {
     index: true,

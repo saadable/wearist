@@ -23,7 +23,7 @@ export const metadata = {
   openGraph: {
     title: 'Wearist | Premium Tech Accessories & Smart Electronics',
     description: 'Discover premium tech accessories at Wearist. Shop wireless earbuds, smartwatches, gaming headphones, and lifestyle electronics.',
-    url: 'https://wearist.store',
+    url: 'https://www.wearist.store',
     siteName: 'Wearist',
     type: 'website',
     images: [
@@ -42,7 +42,7 @@ export const metadata = {
     images: ['https://wearist.store/og-image.png'],
   },
   alternates: {
-    canonical: 'https://wearist.store',
+    canonical: 'https://www.wearist.store',
   },
   robots: {
     index: true,

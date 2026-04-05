@@ -79,6 +79,9 @@ const ProductCard = ({ props }) => {
         return Boolean(stockValue)
     })()
 
+    const approvedReviewCount = Number(props.approvedReviewCount ?? props.reviews ?? props.review_count ?? 0)
+    const approvedAverageRating = Number(props.approvedAverageRating ?? props.rating ?? props.averageRating ?? 0)
+
     // Optimize Cloudinary URL for better performance
     const getOptimizedCloudinaryUrl = (url) => {
         if (!url) return null
@@ -227,13 +230,16 @@ const ProductCard = ({ props }) => {
 
                     {/* Rating */}
                     <div className="rating flex items-center gap-0.5 text-xs sm:text-sm mt-1">
-                        <FaStar className='text-[#eecc0c] w-3 h-3 sm:w-4 sm:h-4' />
-                        <FaStar className='text-[#eecc0c] w-3 h-3 sm:w-4 sm:h-4' />
-                        <FaStar className='text-[#eecc0c] w-3 h-3 sm:w-4 sm:h-4' />
-                        <FaStar className='text-[#eecc0c] w-3 h-3 sm:w-4 sm:h-4' />
-                        <FaStarHalfAlt className='text-[#eecc0c] w-3 h-3 sm:w-4 sm:h-4' />
+                        {[1, 2, 3, 4, 5].map((i) => (
+                            <FaStar
+                                key={i}
+                                className={i <= Math.round(approvedAverageRating)
+                                    ? 'text-[#eecc0c] w-3 h-3 sm:w-4 sm:h-4'
+                                    : 'text-gray-300 w-3 h-3 sm:w-4 sm:h-4'}
+                            />
+                        ))}
                         <p className='text-gray-600 text-xs sm:text-sm ml-1'>
-                            ({props.reviews || props.review_count || 0})
+                            ({approvedReviewCount})
                         </p>
                     </div>
                 </div>

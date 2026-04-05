@@ -9,6 +9,11 @@ import { addToCart } from '@/store/cartSlice'
 import { axiosClient } from '@/utils/axiosClient'
 import ReviewCard from '@/Components/Reviews/ReviewCard'
 import ReviewForm from '@/Components/Reviews/ReviewForm'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Navigation, Pagination } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
 
 const ProductDetail = () => {
   const params = useParams()
@@ -395,7 +400,7 @@ const ProductDetail = () => {
             Add a Review
           </button>
         </div>
-        <div className="bg-white rounded-lg shadow-md divide-y divide-gray-200">
+        <div className="bg-white rounded-lg shadow-md divide-y divide-gray-200 ">
           {reviewsError ? (
             <div className='p-8 text-center text-rose-600'>
               {reviewsError}
@@ -403,9 +408,76 @@ const ProductDetail = () => {
           ) : reviewsLoading ? (
             <div className='p-8 text-center text-gray-600'>Loading reviews…</div>
           ) : reviewCount > 0 ? (
-            approvedReviews.map((rev) => (
-              <ReviewCard key={rev._id || rev.createdAt} review={rev} />
-            ))
+            <div className="relative">
+              {/* Custom Navigation Buttons */}
+              <button className="custom-prev absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white border-2 border-[#2785ca] rounded-full shadow-lg hover:bg-[#2785ca] hover:text-white transition-all duration-200 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed">
+                <svg className="w-5 h-5 text-[#2785ca] group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button className="custom-next absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white border-2 border-[#2785ca] rounded-full shadow-lg hover:bg-[#2785ca] hover:text-white transition-all duration-200 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed">
+                <svg className="w-5 h-5 text-[#2785ca] group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+
+              <Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={20}
+                slidesPerView={1}
+                navigation={{
+                  nextEl: '.custom-next',
+                  prevEl: '.custom-prev'
+                }}
+                pagination={{
+                  clickable: true,
+                  bulletClass: 'custom-bullet',
+                  bulletActiveClass: 'custom-bullet-active'
+                }}
+                breakpoints={{
+                  640: {
+                    slidesPerView: 1,
+                  },
+                  900: {
+                    slidesPerView: 2,
+                  },
+                  1280: {
+                    slidesPerView: 2,
+                  },
+                }}
+                slidesPerGroup={1}
+                className="pb-12"
+              >
+                {approvedReviews.map((rev) => (
+                  <SwiperSlide key={rev._id || rev.createdAt}>
+                    <ReviewCard review={rev} />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+
+              {/* Custom Pagination Styling */}
+              <style dangerouslySetInnerHTML={{
+                __html: `
+                  .custom-bullet {
+                    width: 8px !important;
+                    height: 8px !important;
+                    background-color: #d1d5db !important;
+                    border-radius: 50% !important;
+                    margin: 0 4px !important;
+                    cursor: pointer !important;
+                    transition: all 0.3s ease !important;
+                    opacity: 1 !important;
+                  }
+                  .custom-bullet-active {
+                    background-color: #2785ca !important;
+                    transform: scale(1.2) !important;
+                  }
+                  .swiper-pagination {
+                    bottom: 20px !important;
+                  }
+                `
+              }} />
+            </div>
           ) : (
             <div className='p-6 text-center text-gray-600'>
               <p className='text-base font-semibold text-gray-800'>No Reviews Available Yet.</p>

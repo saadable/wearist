@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux'
 import { addToCart } from '@/store/cartSlice'
 import { axiosClient } from '@/utils/axiosClient'
 import ReviewCard from '@/Components/Reviews/ReviewCard'
+import ReviewForm from '@/Components/Reviews/ReviewForm'
 
 const ProductDetail = () => {
   const params = useParams()
@@ -19,6 +20,10 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [imageLoading, setImageLoading] = useState(true)
+  const [isReviewFormOpen, setIsReviewFormOpen] = useState(false)
+  const [approvedReviews, setApprovedReviews] = useState([])
+  const [reviewsLoading, setReviewsLoading] = useState(true)
+  const [reviewsError, setReviewsError] = useState(null)
 
   // Fetch product by slug from backend
   useEffect(() => {
@@ -26,7 +31,7 @@ const ProductDetail = () => {
       try {
         setLoading(true)
         setError(null)
-        
+
         if (!params?.slug) {
           console.warn('⚠️ No slug provided in params:', params);
           setError('Product slug not found in URL')
@@ -36,9 +41,9 @@ const ProductDetail = () => {
 
         console.log('🔍 Fetching product with slug:', params.slug)
         const response = await axiosClient.get(`/api/products/product/${params.slug}`)
-        
+
         console.log('📦 API Response:', response.data)
-        
+
         if (response.data?.Result?.product) {
           console.log('✅ Product loaded successfully:', response.data.Result.product.title)
           setProductData(response.data.Result.product)
@@ -69,23 +74,43 @@ const ProductDetail = () => {
     }
   }, [params?.slug])
 
+  // Fetch approved product reviews
+  useEffect(() => {
+    const fetchApprovedReviews = async () => {
+      if (!params?.slug) return
+      try {
+        setReviewsLoading(true)
+        setReviewsError(null)
+        const response = await axiosClient.get(`/api/products/product-reviews/${encodeURIComponent(params.slug)}`)
+        setApprovedReviews(response.data.Result.reviews || [])
+      } catch (err) {
+        console.error('🔴 Error fetching approved product reviews:', err)
+        setReviewsError('Unable to load customer reviews at this time.')
+      } finally {
+        setReviewsLoading(false)
+      }
+    }
+
+    fetchApprovedReviews()
+  }, [params?.slug])
+
   // Handle image display
   useEffect(() => {
     if (productData) {
       let images = []
-      
+
       // Get images from backend format (images array)
       if (Array.isArray(productData.images) && productData.images.length > 0) {
-        images = productData.images.map(img => 
+        images = productData.images.map(img =>
           typeof img === 'string' ? img : img?.url
         ).filter(Boolean)
       }
-      
+
       // Fallback to single image field
       if (images.length === 0 && productData.image) {
         images = Array.isArray(productData.image.url) ? productData.image.url : [productData.image.url]
       }
-      
+
       setDisplayImages(images)
       setSelectedImageIndex(0)
     }
@@ -95,7 +120,7 @@ const ProductDetail = () => {
   const getImageUrl = (imageUrl) => {
     if (!imageUrl) return null
     if (typeof imageUrl !== 'string') return imageUrl
-    
+
     // Return the raw URL - Next.js Image will handle optimization
     return imageUrl
   }
@@ -140,7 +165,7 @@ const ProductDetail = () => {
         <div className='text-center py-12'>
           <p className='text-2xl font-bold text-red-600 mb-4'>⚠️ Product Not Found</p>
           <p className='text-gray-700 mb-6 text-lg'>{error || 'Unable to load product details'}</p>
-          
+
           {/* Debugging Info */}
           <div className='bg-gray-100 rounded-lg p-4 mt-6 text-left max-w-2xl mx-auto'>
             <p className='text-sm font-semibold text-gray-700 mb-2'>Debug Information:</p>
@@ -169,32 +194,9 @@ const ProductDetail = () => {
   }
 
   const currentImage = displayImages[selectedImageIndex]
-
-  // sample data used for prototype review UI; will be replaced by backend-driven data later
-  const sampleReviews = [
-    {
-      userName: 'Alice',
-      userImage: '',
-      rating: 4.5,
-      comment: 'Great product, fast shipping, highly recommend!'
-    },
-    {
-      userName: 'Bob',
-      userImage: 'https://i.pravatar.cc/150?img=3',
-      rating: 5,
-      comment: 'Exceeded my expectations. Will buy again.'
-    },
-    {
-      userName: 'Charlie',
-      userImage: null,
-      rating: 3,
-      comment: 'It works as advertised but packaging was damaged.'
-    }
-  ];
-
-  const reviewCount = sampleReviews.length;
+  const reviewCount = approvedReviews.length
   const averageRating = reviewCount
-    ? (sampleReviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1)
+    ? (approvedReviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / reviewCount).toFixed(1)
     : null;
 
   return (
@@ -231,11 +233,10 @@ const ProductDetail = () => {
                     setSelectedImageIndex(idx)
                     setImageLoading(true)
                   }}
-                  className={`shrink-0 w-16 sm:w-20 h-16 sm:h-20 rounded-md overflow-hidden border-2 transition-all relative ${
-                    selectedImageIndex === idx
-                      ? 'border-[#2785ca] shadow-md'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
+                  className={`shrink-0 w-16 sm:w-20 h-16 sm:h-20 rounded-md overflow-hidden border-2 transition-all relative ${selectedImageIndex === idx
+                    ? 'border-[#2785ca] shadow-md'
+                    : 'border-gray-300 hover:border-gray-400'
+                    }`}
                   aria-label={`View image ${idx + 1}`}
                   aria-pressed={selectedImageIndex === idx}
                 >
@@ -281,7 +282,7 @@ const ProductDetail = () => {
               )}
             </div>
           </div>
-          
+
           <p className='text-sm sm:text-base text-gray-700 leading-relaxed'>
             {productData.description}
           </p>
@@ -305,17 +306,21 @@ const ProductDetail = () => {
             </div>
 
             {/* Rating Section */}
-            {productData.reviews !== undefined && (
-              <div className='flex items-center gap-2 flex-wrap'>
+            {reviewsLoading ? (
+              <div className='text-sm sm:text-base text-gray-600'>Loading approved reviews…</div>
+            ) : reviewCount > 0 ? (
+              <div className='flex items-center gap-3 flex-wrap'>
                 <div className='flex items-center gap-1 text-[#eecc0c]'>
-                  {[1, 2, 3, 4, 5].map(i => (
-                    <FaStar key={i} className='text-sm sm:text-base' />
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <FaStar key={i} className={i <= Math.round(Number(averageRating) || 0) ? 'text-sm sm:text-base text-[#eecc0c]' : 'text-sm sm:text-base text-gray-300'} />
                   ))}
                 </div>
                 <span className='text-xs sm:text-sm text-gray-600 font-medium'>
-                  ({productData.reviews} {productData.reviews === 1 ? 'review' : 'reviews'})
+                  {averageRating} average • {reviewCount} approved {reviewCount === 1 ? 'review' : 'reviews'}
                 </span>
               </div>
+            ) : (
+              <div className='text-sm sm:text-base text-gray-600'>No Reviews Available Yet.</div>
             )}
           </div>
 
@@ -346,13 +351,12 @@ const ProductDetail = () => {
                 setTimeout(() => setAddedToCart(false), 2000)
               }}
               disabled={!productData.stock}
-              className={`flex-1 px-5 py-2 sm:py-3 rounded-md font-semibold transition-colors text-sm sm:text-base ${
-                addedToCart
-                  ? 'bg-green-600 text-white'
-                  : productData.stock
+              className={`flex-1 px-5 py-2 sm:py-3 rounded-md font-semibold transition-colors text-sm sm:text-base ${addedToCart
+                ? 'bg-green-600 text-white'
+                : productData.stock
                   ? 'bg-[#2785ca] text-white hover:bg-[#1f6fa8]'
                   : 'bg-gray-400 text-white cursor-not-allowed'
-              }`}
+                }`}
             >
               {addedToCart ? '✓ Added to Cart' : 'Add to Cart'}
             </button>
@@ -366,29 +370,58 @@ const ProductDetail = () => {
 
       {/* Prototype reviews section */}
       <div className="mt-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Customer Reviews
-          {reviewCount > 0 && (
-            <span className="text-base font-medium text-gray-600 ml-2">({reviewCount})</span>
-          )}
-        </h2>
-        {averageRating && (
-          <div className="flex items-center gap-1 text-yellow-400 mb-4">
-            {[1,2,3,4,5].map(i => (
-              <FaStar key={i} className={i <= Math.round(averageRating) ? 'w-5 h-5' : 'w-5 h-5 text-gray-300'} />
-            ))}
-            <span className="ml-2 text-gray-600 text-sm">{averageRating}</span>
+        <div className="customer-reviews flex items-center justify-between">
+          <div className="headings">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Customer Reviews
+              {reviewCount > 0 && (
+                <span className="text-base font-medium text-gray-600 ml-2">({reviewCount})</span>
+              )}
+            </h2>
+            {averageRating && (
+              <div className="flex items-center gap-1 text-yellow-400 mb-4">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <FaStar key={i} className={i <= Math.round(averageRating) ? 'w-5 h-5' : 'w-5 h-5 text-gray-300'} />
+                ))}
+                <span className="ml-2 text-gray-600 text-sm">{averageRating}</span>
+              </div>
+            )}
           </div>
-        )}
+          <button 
+            onClick={() => setIsReviewFormOpen(true)}
+            productId={productData._id}
+            className='w-[100px] h-[30px] flex items-center justify-center bg-[#2785ca] border-[#2785ca] rounded-[10px] text-white text-[10px] font-semibold cursor-pointer hover:bg-[#1f6fa8] hover:shadow-md transition-all duration-200'
+          >
+            Add a Review
+          </button>
+        </div>
         <div className="bg-white rounded-lg shadow-md divide-y divide-gray-200">
-          {sampleReviews.map((rev, idx) => (
-            <ReviewCard key={idx} review={rev} />
-          ))}
-          {!reviewCount && (
-            <p className="p-6 text-center text-gray-600">No reviews yet.</p>
+          {reviewsError ? (
+            <div className='p-8 text-center text-rose-600'>
+              {reviewsError}
+            </div>
+          ) : reviewsLoading ? (
+            <div className='p-8 text-center text-gray-600'>Loading reviews…</div>
+          ) : reviewCount > 0 ? (
+            approvedReviews.map((rev) => (
+              <ReviewCard key={rev._id || rev.createdAt} review={rev} />
+            ))
+          ) : (
+            <div className='p-6 text-center text-gray-600'>
+              <p className='text-base font-semibold text-gray-800'>No Reviews Available Yet.</p>
+              <p className='mt-2'>This product has not been reviewed until now.</p>
+            </div>
           )}
         </div>
       </div>
+
+      {/* Review Form Modal */}
+      <ReviewForm 
+        isOpen={isReviewFormOpen} 
+        onClose={() => setIsReviewFormOpen(false)}
+        productName={productData?.title}
+        Id={productData?._id}
+      />
     </article>
   )
 }

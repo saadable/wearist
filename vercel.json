@@ -1,0 +1,15 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.wearist.store"
+        }
+      ],
+      "destination": "https://wearist.store/$1",
+      "permanent": true
+    }
+  ]
+}

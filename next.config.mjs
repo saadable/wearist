@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Image optimization for external images
   images: {
     remotePatterns: [
       {
@@ -10,7 +11,39 @@ const nextConfig = {
       },
     ],
   },
-  async redirects() {
+
+  // Trailing slash configuration
+  trailingSlash: false,
+
+  // SSL/Security headers
+  headers: async () => {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+    ];
+  },
+
+  // Simplified redirect from non-www to www (only one rule needed)
+  redirects: async () => {
     return [
       {
         source: '/:path*',
@@ -20,21 +53,22 @@ const nextConfig = {
             value: 'wearist.store',
           },
         ],
-        permanent: true,
         destination: 'https://www.wearist.store/:path*',
-      },
-      {
-        source: '/',
-        has: [
-          {
-            type: 'host',
-            value: 'wearist.store',
-          },
-        ],
         permanent: true,
-        destination: 'https://www.wearist.store/',
       },
     ];
+  },
+
+  // Performance optimizations
+  swcMinify: true,
+  compress: true,
+
+  // React strict mode for development
+  reactStrictMode: true,
+
+  // Experimental features for better performance
+  experimental: {
+    optimizePackageImports: ['react-icons', 'swiper'],
   },
 };
 

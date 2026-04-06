@@ -1,15 +1,8 @@
 {
-  "redirects": [
+  "rewrites": [
     {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.wearist.store"
-        }
-      ],
-      "destination": "https://wearist.store/$1",
-      "permanent": true
+      "source": "/api/(.*)",
+      "destination": "https://wearist-backend.vercel.app/api/$1"
     }
   ]
 }

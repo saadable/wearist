@@ -45,6 +45,7 @@ const nextConfig = {
   // Simplified redirect from non-www to www (only one rule needed)
   redirects: async () => {
     return [
+      // Single redirect rule to handle non-www to www
       {
         source: '/:path*',
         has: [

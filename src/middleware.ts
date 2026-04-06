@@ -2,21 +2,11 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 /**
- * Middleware for handling redirects and SEO optimizations
+ * Middleware for SEO optimizations
  * Runs on the Edge for better performance
  */
 export function middleware(request: NextRequest) {
-  const host = request.headers.get('host')
-  
-  // Redirect non-www to www domain
-  if (host === 'wearist.store') {
-    return NextResponse.redirect(
-      `https://www.wearist.store${request.nextUrl.pathname}${request.nextUrl.search}`,
-      { status: 301 }
-    )
-  }
-
-  // Add canonical URL header for SEO
+  // Add canonical URL header for SEO (redirects are handled by Vercel)
   const response = NextResponse.next()
   const url = request.nextUrl.clone()
   url.hostname = 'www.wearist.store'

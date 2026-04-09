@@ -391,28 +391,28 @@ const ProductDetail = () => {
             </button>
           </div>
 
-          {/* Product Description */}
-          <div className='mt-6 pt-6 border-t border-gray-200'>
-            <h3 className='text-lg font-semibold text-gray-800 mb-4'>Product Description</h3>
-            <div className='text-sm sm:text-base text-gray-700 leading-relaxed'>
-              <ReactMarkdown
-                components={{
-                  p: ({ children }) => <p className="mb-4">{children}</p>,
-                  strong: ({ children }) => <strong className="font-bold text-gray-900">{children}</strong>,
-                  em: ({ children }) => <em className="italic">{children}</em>,
-                  ul: ({ children }) => <ul className="list-disc list-inside mb-4 space-y-1">{children}</ul>,
-                  ol: ({ children }) => <ol className="list-decimal list-inside mb-4 space-y-1">{children}</ol>,
-                  li: ({ children }) => <li className="text-gray-700">{children}</li>,
-                  h1: ({ children }) => <h1 className="text-xl font-bold text-gray-900 mb-2">{children}</h1>,
-                  h2: ({ children }) => <h2 className="text-lg font-bold text-gray-900 mb-2">{children}</h2>,
-                  h3: ({ children }) => <h3 className="text-base font-bold text-gray-900 mb-2">{children}</h3>,
-                }}
-              >
-                {productData.description}
-              </ReactMarkdown>
-            </div>
-          </div>
+        </div>
+      </div>
 
+      {/* Product Description - Full Width */}
+      <div className='mt-8 pt-6 border-t border-gray-200'>
+        <h3 className='text-lg font-semibold text-gray-800 mb-4'>Product Description</h3>
+        <div className='text-sm sm:text-base text-gray-700 leading-relaxed'>
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => <p className="mb-4">{children}</p>,
+              strong: ({ children }) => <strong className="font-bold text-gray-900">{children}</strong>,
+              em: ({ children }) => <em className="italic">{children}</em>,
+              ul: ({ children }) => <ul className="list-disc list-inside mb-4 space-y-1">{children}</ul>,
+              ol: ({ children }) => <ol className="list-decimal list-inside mb-4 space-y-1">{children}</ol>,
+              li: ({ children }) => <li className="text-gray-700">{children}</li>,
+              h1: ({ children }) => <h1 className="text-xl font-bold text-gray-900 mb-2">{children}</h1>,
+              h2: ({ children }) => <h2 className="text-lg font-bold text-gray-900 mb-2">{children}</h2>,
+              h3: ({ children }) => <h3 className="text-base font-bold text-gray-900 mb-2">{children}</h3>,
+            }}
+          >
+            {productData.description}
+          </ReactMarkdown>
         </div>
       </div>
 

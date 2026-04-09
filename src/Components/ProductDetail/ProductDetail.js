@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { FaStar } from 'react-icons/fa6'
-import { useParams } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useDispatch } from 'react-redux'
-import { addToCart } from '@/store/cartSlice'
+import { clearCart, addToCart } from '@/store/cartSlice'
 import { axiosClient } from '@/utils/axiosClient'
 import ReviewCard from '@/Components/Reviews/ReviewCard'
 import ReviewForm from '@/Components/Reviews/ReviewForm'
@@ -14,9 +14,16 @@ import { Navigation, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
+import dynamic from 'next/dynamic'
+
+const ReactMarkdown = dynamic(() => import('react-markdown'), {
+  loading: () => <p className="text-gray-600">Loading...</p>,
+  ssr: false,
+})
 
 const ProductDetail = () => {
   const params = useParams()
+  const router = useRouter()
   const dispatch = useDispatch()
   const [productData, setProductData] = useState(null)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
@@ -288,10 +295,6 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          <p className='text-sm sm:text-base text-gray-700 leading-relaxed'>
-            {productData.description}
-          </p>
-
           {/* Price and Rating Section */}
           <div className='flex flex-col gap-3 py-3 md:py-4 border-y border-gray-200'>
             <div className='flex items-center gap-3 flex-wrap'>
@@ -365,9 +368,49 @@ const ProductDetail = () => {
             >
               {addedToCart ? '✓ Added to Cart' : 'Add to Cart'}
             </button>
-            <button className='flex-1 border-2 border-[#2785ca] text-[#2785ca] px-5 py-2 sm:py-3 rounded-md font-semibold hover:bg-[#2785ca] hover:text-white transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed'>
+            <button
+              onClick={() => {
+                // Clear existing cart and add current product for buy now
+                dispatch(clearCart())
+                dispatch(addToCart({
+                  id: productData._id || productData.slug,
+                  title: productData.title,
+                  new_price: productData.new_price,
+                  image: displayImages[0],
+                  slug: productData.slug,
+                  stock: productData.stock === true || productData.stock === 'true',
+                  reviews: productData.reviews || 0,
+                }))
+                // Redirect to checkout
+                router.push('/checkout')
+              }}
+              disabled={!productData.stock}
+              className='flex-1 border-2 border-[#2785ca] text-[#2785ca] px-5 py-2 sm:py-3 rounded-md font-semibold hover:bg-[#2785ca] hover:text-white transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-[#2785ca]'
+            >
               Buy Now
             </button>
+          </div>
+
+          {/* Product Description */}
+          <div className='mt-6 pt-6 border-t border-gray-200'>
+            <h3 className='text-lg font-semibold text-gray-800 mb-4'>Product Description</h3>
+            <div className='text-sm sm:text-base text-gray-700 leading-relaxed'>
+              <ReactMarkdown
+                components={{
+                  p: ({ children }) => <p className="mb-4">{children}</p>,
+                  strong: ({ children }) => <strong className="font-bold text-gray-900">{children}</strong>,
+                  em: ({ children }) => <em className="italic">{children}</em>,
+                  ul: ({ children }) => <ul className="list-disc list-inside mb-4 space-y-1">{children}</ul>,
+                  ol: ({ children }) => <ol className="list-decimal list-inside mb-4 space-y-1">{children}</ol>,
+                  li: ({ children }) => <li className="text-gray-700">{children}</li>,
+                  h1: ({ children }) => <h1 className="text-xl font-bold text-gray-900 mb-2">{children}</h1>,
+                  h2: ({ children }) => <h2 className="text-lg font-bold text-gray-900 mb-2">{children}</h2>,
+                  h3: ({ children }) => <h3 className="text-base font-bold text-gray-900 mb-2">{children}</h3>,
+                }}
+              >
+                {productData.description}
+              </ReactMarkdown>
+            </div>
           </div>
 
         </div>

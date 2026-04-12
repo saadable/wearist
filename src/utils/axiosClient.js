@@ -2,8 +2,8 @@ import axios from "axios";
 
 
 const getBaseUrl = () => {
-    // prefer exposed NEXT_PUBLIC_BASE_URL for client-side, fall back to BASE_URL or window origin
-    const envUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL;
+    // prefer local frontend base URL first, then API-specific base URL
+    const envUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || process.env.BASE_URL;
     if (envUrl) return envUrl.replace(/\/$/, '')
     if (typeof window !== 'undefined' && window.location?.origin) return window.location.origin.replace(/\/$/, '')
     return 'http://localhost:4000'

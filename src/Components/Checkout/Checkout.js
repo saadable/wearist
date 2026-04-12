@@ -85,6 +85,13 @@ const Checkout = () => {
 
     setIsLoading(true)
     
+    const finalTotal = Math.max(0, Number(totalPrice) - Number(discountAmount))
+    const couponPayload = couponApplied ? {
+      code: couponApplied.code,
+      discountAmount: Number(discountAmount.toFixed(2)),
+      productId: couponApplied.productId
+    } : null
+
     try {
       console.log('Submitting order with data:', {
         items,
@@ -97,12 +104,8 @@ const Checkout = () => {
         phone: phone.trim(),
         email: email.trim(),
         paymentMethod,
-        totalPrice,
-        coupon: couponApplied ? {
-          code: couponApplied.code,
-          discountAmount: discountAmount.toFixed(2),
-          productId: couponApplied.productId
-        } : null
+        totalPrice: finalTotal,
+        coupon: couponPayload
       })
 
       const response = await axiosClient.post('/api/orders/create-order', {
@@ -116,12 +119,8 @@ const Checkout = () => {
         phone: phone.trim(),
         email: email.trim(),
         paymentMethod,
-        totalPrice,
-        coupon: couponApplied ? {
-          code: couponApplied.code,
-          discountAmount: discountAmount.toFixed(2),
-          productId: couponApplied.productId
-        } : null
+        totalPrice: finalTotal,
+        coupon: couponPayload
       })
 
       console.log('Order response received:', response.data)

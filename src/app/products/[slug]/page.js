@@ -1,11 +1,29 @@
 import ProductDetailClient from './ProductDetailClient'
-import { axiosClient } from '@/utils/axiosClient'
 import { notFound } from 'next/navigation'
+
+const getMetadataApiBase = () => {
+  return (process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || process.env.BASE_URL || 'http://localhost:4000').replace(/\/$/, '')
+}
 
 export async function generateMetadata({ params }) {
   try {
-    const response = await axiosClient.get(`/api/products/product/${params.slug}`)
-    const product = response.data?.Result?.product || response.data?.product
+    const apiBase = getMetadataApiBase()
+    const url = `${apiBase}/api/products/product/${encodeURIComponent(params.slug)}`
+    const response = await fetch(url, {
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-store',
+    })
+
+    if (!response.ok) {
+      console.warn('Metadata fetch did not return OK status:', response.status, response.statusText)
+      return {
+        title: 'Product Not Found | Wearist',
+        description: 'The requested product could not be found.',
+      }
+    }
+
+    const data = await response.json()
+    const product = data?.Result?.product || data?.product
 
     if (!product) {
       return {

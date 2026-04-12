@@ -1,13 +1,12 @@
 'use client'
 
 import React, { useState } from 'react'
-import Image from 'next/image'
 import { useSelector, useDispatch } from 'react-redux'
 import { FaUniversity, FaMoneyBillWave, FaShoppingBag, FaCheck } from 'react-icons/fa'
 import Link from 'next/link'
 import { clearCart } from '@/store/cartSlice'
-import axios from 'axios'
 import { axiosClient } from '@/utils/axiosClient'
+import toast from 'react-hot-toast'
 
 const Checkout = () => {
   const dispatch = useDispatch()
@@ -40,6 +39,11 @@ const Checkout = () => {
   const [error, setError] = useState('')
   const [orderId, setOrderId] = useState(null)
   const [orderTotal, setOrderTotal] = useState(0)
+  const [couponCode, setCouponCode] = useState('')
+  const [couponApplied, setCouponApplied] = useState(null)
+  const [couponError, setCouponError] = useState('')
+  const [discountAmount, setDiscountAmount] = useState(0)
+  const [couponLoading, setCouponLoading] = useState(false)
 
   async function submitOrder(e){
     e.preventDefault()
@@ -94,7 +98,12 @@ const Checkout = () => {
         phone: phone.trim(),
         email: email.trim(),
         paymentMethod,
-        totalPrice
+        totalPrice,
+        coupon: couponApplied ? {
+          code: couponApplied.code,
+          discountAmount: discountAmount.toFixed(2),
+          productId: couponApplied.productId
+        } : null
       })
 
       const response = await axiosClient.post('/api/orders/create-order', {
@@ -108,7 +117,12 @@ const Checkout = () => {
         phone: phone.trim(),
         email: email.trim(),
         paymentMethod,
-        totalPrice
+        totalPrice,
+        coupon: couponApplied ? {
+          code: couponApplied.code,
+          discountAmount: discountAmount.toFixed(2),
+          productId: couponApplied.productId
+        } : null
       })
 
       console.log('Order response received:', response.data)
@@ -137,6 +151,71 @@ const Checkout = () => {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleApplyCoupon = async () => {
+    setCouponError('')
+
+    if (couponApplied) {
+      setCouponError('Only one coupon may be used at a time. Remove the current coupon before applying another.')
+      return
+    }
+    if (!couponCode.trim()) {
+      setCouponError('Enter a coupon code to apply')
+      return
+    }
+    if (!items || items.length === 0) {
+      setCouponError('Your cart is empty')
+      return
+    }
+
+    setCouponLoading(true)
+    let applied = false
+
+    for (const item of items) {
+      try {
+        const response = await axiosClient.post('/api/products/apply-coupon', {
+          productId: item.id,
+          code: couponCode.trim()
+        })
+
+        const discountedPrice = Number(response.data.Result.discountedPrice)
+        if (!Number.isFinite(discountedPrice)) {
+          continue
+        }
+
+        const unitPrice = Number(item.new_price)
+        const quantity = Number(item.quantity || 1)
+        const savedAmount = (unitPrice - discountedPrice) * quantity
+
+        if (savedAmount <= 0) {
+          continue
+        }
+
+        setCouponApplied({
+          code: couponCode.trim(),
+          productId: item.id,
+          productTitle: item.title,
+          message: response.data.Result.coupon?.message || '',
+          discount: response.data.Result.coupon?.discount || 0,
+          savedAmount
+        })
+        setDiscountAmount(savedAmount)
+        toast.success(`Coupon applied! You saved PKR ${savedAmount.toFixed(2)} on this order.`)
+        applied = true
+        break
+      } catch (err) {
+        continue
+      }
+    }
+
+    if (!applied) {
+      setCouponError('Coupon code is not valid for any item in your cart.')
+      setCouponApplied(null)
+      setDiscountAmount(0)
+    }
+
+    setCouponLoading(false)
   }
 
   // const handleInputChange = (e) => {
@@ -176,7 +255,7 @@ const Checkout = () => {
             <p className='text-xs sm:text-sm text-gray-600'><strong>Total Amount:</strong> <span className='font-semibold text-green-600'>PKR {orderTotal.toFixed(2)}</span></p>
             <p className='text-xs sm:text-sm text-gray-600'><strong>Payment Method:</strong> {paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod === 'bank' ? 'Bank Transfer' : paymentMethod === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'}</p>
           </div>
-          <Link href='/all-products' className='inline-block bg-[#2785ca] text-white px-6 py-2 rounded-md font-semibold text-sm sm:text-base'>
+          <Link href='/all-products' className='inline-block bg-[#1f4f8b] text-white px-6 py-2 rounded-md font-semibold text-sm sm:text-base hover:bg-[#153b67] transition-colors'>
             Continue Shopping
           </Link>
         </div>
@@ -397,6 +476,49 @@ const Checkout = () => {
             )} */}
           </div>
 
+          {/* Coupon Redeem Section */}
+          <div className='bg-white border border-[#2785ca] rounded-lg p-4 sm:p-6 shadow-sm'>
+            <h2 className='text-lg sm:text-xl font-bold text-[#2785ca] mb-4'>Redeem a coupon</h2>
+            <div className='grid gap-3 sm:grid-cols-[1fr_auto]'>
+              <input
+                type='text'
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                placeholder='Enter coupon code'
+                className='w-full px-4 py-3 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-[#2785ca]'
+              />
+              <button
+                type='button'
+                onClick={handleApplyCoupon}
+                disabled={couponLoading || Boolean(couponApplied)}
+                className='inline-flex items-center justify-center rounded-md bg-[#2785ca] px-5 py-3 text-sm font-semibold text-white hover:bg-[#1f6fa8] transition-colors disabled:opacity-60 disabled:cursor-not-allowed'
+              >
+                {couponLoading ? 'Applying…' : 'Apply'}
+              </button>
+            </div>
+            {couponError && (
+              <p className='mt-3 text-sm text-red-600'>{couponError}</p>
+            )}
+            {couponApplied && (
+              <div className='mt-4 rounded-2xl bg-green-50 border border-green-200 p-4 text-sm text-green-800'>
+                <p className='font-semibold'>Coupon applied: {couponApplied.code}</p>
+                <p>{couponApplied.message || `You saved PKR ${couponApplied.savedAmount.toFixed(2)} on ${couponApplied.productTitle}.`}</p>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setCouponApplied(null)
+                    setCouponCode('')
+                    setCouponError('')
+                    setDiscountAmount(0)
+                  }}
+                  className='mt-3 inline-flex items-center justify-center rounded-md border border-[#2785ca] bg-white px-4 py-2 text-sm font-semibold text-[#2785ca] hover:bg-[#eaf4ff] transition-colors'
+                >
+                  Remove coupon
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Place Order Button - Inside Form */}
           <div className='bg-white border border-[#2785ca] rounded-lg p-4 sm:p-6 shadow-sm mt-6'>
             <button
@@ -433,19 +555,25 @@ const Checkout = () => {
                 <span>Subtotal:</span>
                 <span>PKR {(Number(totalPrice) || 0).toFixed(2)}</span>
               </div>
+              {couponApplied && (
+                <div className='flex justify-between text-xs sm:text-sm text-green-100'>
+                  <span>Coupon discount ({couponApplied.code}):</span>
+                  <span>- PKR {discountAmount.toFixed(2)}</span>
+                </div>
+              )}
               <div className='flex justify-between text-xs sm:text-sm'>
                 <span>Shipping:</span>
                 <span>Free</span>
               </div>
               <div className='flex justify-between text-base sm:text-lg font-bold pt-2 border-t border-[#1f6fa8]'>
                 <span>Total:</span>
-                <span>PKR {(Number(totalPrice) || 0).toFixed(2)}</span>
+                <span>PKR {Math.max(0, Number(totalPrice) - Number(discountAmount)).toFixed(2)}</span>
               </div>
             </div>
 
             <Link
-              href='/products'
-              className='block text-center mt-2 sm:mt-3 border-2 border-[#2785ca] text-[#2785ca] py-2 rounded-md font-semibold text-sm sm:text-base hover:bg-blue-50 transition-colors'
+              href='/all-products'
+              className='block text-center mt-2 sm:mt-3 bg-[#1f4f8b] text-white py-2 rounded-md font-semibold text-sm sm:text-base hover:bg-[#153b67] transition-colors'
             >
               Continue Shopping
             </Link>

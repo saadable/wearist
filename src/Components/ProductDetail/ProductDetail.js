@@ -332,6 +332,23 @@ const ProductDetail = () => {
             )}
           </div>
 
+          {productData.coupon?.code && (
+            <div className='rounded-3xl border border-green-200 bg-green-50 p-4 text-gray-800 mb-4'>
+              <div className='flex flex-wrap items-center justify-between gap-3'>
+                <div>
+                  <p className='text-sm text-green-700 font-semibold'>Product-specific coupon available</p>
+                  <p className='mt-2 text-base font-semibold text-gray-900'>Use code <span className='text-[#2785ca]'>{productData.coupon.code}</span> to save <span className='text-[#2785ca]'>{productData.coupon.discount}%</span> on this product.</p>
+                </div>
+                <span className='rounded-full bg-green-600 px-3 py-1 text-xs font-semibold text-white'>Expires {new Date(productData.coupon.expiryDate).toLocaleDateString()}</span>
+              </div>
+              {productData.coupon.message && (
+                <p className='mt-3 text-sm leading-6 text-gray-700'>
+                  {productData.coupon.message}
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Stock Status */}
           {productData.stock !== undefined && (
             <div className='flex items-center gap-2'>

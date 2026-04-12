@@ -179,13 +179,14 @@ const Checkout = () => {
         })
 
         const discountedPrice = Number(response.data.Result.discountedPrice)
-        if (!Number.isFinite(discountedPrice)) {
+        const discountRate = Number(response.data.Result.coupon?.discount || 0)
+        if (!Number.isFinite(discountedPrice) || !Number.isFinite(discountRate)) {
           continue
         }
 
         const unitPrice = Number(item.new_price)
         const quantity = Number(item.quantity || 1)
-        const savedAmount = (unitPrice - discountedPrice) * quantity
+        const savedAmount = Number(((unitPrice * (discountRate / 100)) * quantity).toFixed(2))
 
         if (savedAmount <= 0) {
           continue
@@ -196,7 +197,7 @@ const Checkout = () => {
           productId: item.id,
           productTitle: item.title,
           message: response.data.Result.coupon?.message || '',
-          discount: response.data.Result.coupon?.discount || 0,
+          discount: discountRate,
           savedAmount
         })
         setDiscountAmount(savedAmount)

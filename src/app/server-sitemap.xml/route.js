@@ -14,7 +14,7 @@ export async function GET(request) {
     // const reviews = await axiosClient.get('/api/reviews');
     // reviews.data.forEach(review => {
     //   additionalUrls.push({
-    //     loc: `${process.env.SITE_URL || 'https://wearist.store'}/reviews/${review.id}`,
+    //     loc: `${process.env.SITE_URL || 'https://www.wearist.store'}/reviews/${review.id}`,
     //     lastmod: review.updatedAt,
     //     changefreq: 'weekly',
     //     priority: 0.5,

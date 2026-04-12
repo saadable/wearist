@@ -27,7 +27,7 @@ export const metadata = {
     'trendiest electronics',
     'online tech shop',
   ],
-  authors: [{ name: 'Wearist', url: 'https://wearist.store' }],
+  authors: [{ name: 'Wearist', url: 'https://www.wearist.store' }],
   openGraph: {
     title: 'Wearist | Premium Tech Accessories & Smart Electronics',
     description:

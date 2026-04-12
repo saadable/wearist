@@ -6,15 +6,23 @@ import type { NextRequest } from 'next/server'
  * Runs on the Edge for better performance
  */
 export function middleware(request: NextRequest) {
-  // Add canonical URL header for SEO (redirects are handled by Vercel)
-  const response = NextResponse.next()
   const url = request.nextUrl.clone()
+  const hostname = request.nextUrl.hostname
+
+  // Redirect the non-www domain to the canonical www domain in production
+  if (hostname === 'wearist.store') {
+    url.hostname = 'www.wearist.store'
+    url.protocol = 'https'
+    return NextResponse.redirect(url)
+  }
+
+  const response = NextResponse.next()
   url.hostname = 'www.wearist.store'
   url.protocol = 'https'
-  
+
   // Set Link header with canonical URL for better SEO
   response.headers.set('Link', `<${url.href}>; rel="canonical"`)
-  
+
   return response
 }
 

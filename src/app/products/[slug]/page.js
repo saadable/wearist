@@ -34,7 +34,7 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title,
         description,
-        url: `https://wearist.store/products/${params.slug}`,
+        url: `https://www.wearist.store/products/${params.slug}`,
         siteName: 'Wearist',
         type: 'product',
         images: product.images?.length > 0 ? [
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }) {
           },
         ] : [
           {
-            url: 'https://wearist.store/og-image.png',
+            url: 'https://www.wearist.store/og-image.png',
             width: 1200,
             height: 630,
             alt: product.title,
@@ -57,10 +57,10 @@ export async function generateMetadata({ params }) {
         card: 'summary_large_image',
         title,
         description,
-        images: product.images?.[0] || 'https://wearist.store/og-image.png',
+        images: product.images?.[0] || 'https://www.wearist.store/og-image.png',
       },
       alternates: {
-        canonical: `https://wearist.store/products/${params.slug}`,
+        canonical: `https://www.wearist.store/products/${params.slug}`,
       },
       robots: {
         index: true,

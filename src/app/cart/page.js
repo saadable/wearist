@@ -20,7 +20,7 @@ export const metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://wearist.store/og-image.png',
+        url: 'https://www.wearist.store/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Wearist shopping cart',
@@ -31,10 +31,10 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Shopping Cart - Review Your Audio Gear | Wearist',
     description: 'Review your selected premium audio products in your shopping cart.',
-    images: ['https://wearist.store/og-image.png'],
+    images: ['https://www.wearist.store/og-image.png'],
   },
   alternates: {
-    canonical: 'https://wearist.store/cart',
+    canonical: 'https://www.wearist.store/cart',
   },
   robots: {
     index: false,

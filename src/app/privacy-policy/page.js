@@ -14,12 +14,12 @@ export const metadata = {
   openGraph: {
     title: 'Privacy Policy - Data Protection & Security | Wearist',
     description: 'Learn how Wearist protects your privacy and handles your personal data with industry-standard security measures.',
-    url: 'https://wearist.store/privacy-policy',
+    url: 'https://www.wearist.store/privacy-policy',
     siteName: 'Wearist',
     type: 'website',
     images: [
       {
-        url: 'https://wearist.store/og-image.png',
+        url: 'https://www.wearist.store/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Wearist privacy policy',
@@ -30,10 +30,10 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Privacy Policy - Data Protection & Security | Wearist',
     description: 'Learn how Wearist protects your privacy and handles your personal data.',
-    images: ['https://wearist.store/og-image.png'],
+    images: ['https://www.wearist.store/og-image.png'],
   },
   alternates: {
-    canonical: 'https://wearist.store/privacy-policy',
+    canonical: 'https://www.wearist.store/privacy-policy',
   },
   robots: {
     index: true,

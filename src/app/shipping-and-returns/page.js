@@ -14,12 +14,12 @@ export const metadata = {
   openGraph: {
     title: 'Shipping & Returns Policy - Fast Delivery & Easy Returns | Wearist',
     description: 'Learn about Wearist shipping options, delivery times, and hassle-free returns policy.',
-    url: 'https://wearist.store/shipping-and-returns',
+    url: 'https://www.wearist.store/shipping-and-returns',
     siteName: 'Wearist',
     type: 'website',
     images: [
       {
-        url: 'https://wearist.store/og-image.png',
+        url: 'https://www.wearist.store/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Wearist shipping and returns',
@@ -30,10 +30,10 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Shipping & Returns Policy - Fast Delivery & Easy Returns | Wearist',
     description: 'Learn about Wearist shipping options, delivery times, and hassle-free returns policy.',
-    images: ['https://wearist.store/og-image.png'],
+    images: ['https://www.wearist.store/og-image.png'],
   },
   alternates: {
-    canonical: 'https://wearist.store/shipping-and-returns',
+    canonical: 'https://www.wearist.store/shipping-and-returns',
   },
   robots: {
     index: true,

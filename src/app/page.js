@@ -28,18 +28,18 @@ export const metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://wearist.store/og-image.png',
+        url: 'https://www.wearist.store/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Wearist premium tech accessories and electronics',
-      },
+      }
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Wearist | Premium Tech Accessories & Smart Electronics',
     description: 'Discover premium tech accessories at Wearist. Shop wireless earbuds, smartwatches, gaming headphones, and lifestyle electronics.',
-    images: ['https://wearist.store/og-image.png'],
+    images: ['https://www.wearist.store/og-image.png'],
   },
   alternates: {
     canonical: 'https://www.wearist.store',

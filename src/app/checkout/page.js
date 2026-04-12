@@ -15,12 +15,12 @@ export const metadata = {
   openGraph: {
     title: 'Secure Checkout - Complete Your Audio Purchase | Wearist',
     description: 'Complete your secure checkout for premium audio products with fast, safe payment processing.',
-    url: 'https://wearist.store/checkout',
+    url: 'https://www.wearist.store/checkout',
     siteName: 'Wearist',
     type: 'website',
     images: [
       {
-        url: 'https://wearist.store/og-image.png',
+        url: 'https://www.wearist.store/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Wearist secure checkout',
@@ -31,10 +31,10 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Secure Checkout - Complete Your Audio Purchase | Wearist',
     description: 'Complete your secure checkout for premium audio products.',
-    images: ['https://wearist.store/og-image.png'],
+    images: ['https://www.wearist.store/og-image.png'],
   },
   alternates: {
-    canonical: 'https://wearist.store/checkout',
+    canonical: 'https://www.wearist.store/checkout',
   },
   robots: {
     index: false,

@@ -6,7 +6,6 @@ import { FaUniversity, FaMoneyBillWave, FaShoppingBag, FaCheck } from 'react-ico
 import Link from 'next/link'
 import { clearCart } from '@/store/cartSlice'
 import { axiosClient } from '@/utils/axiosClient'
-import toast from 'react-hot-toast'
 
 const Checkout = () => {
   const dispatch = useDispatch()
@@ -201,7 +200,6 @@ const Checkout = () => {
           savedAmount
         })
         setDiscountAmount(savedAmount)
-        toast.success(`Coupon applied! You saved PKR ${savedAmount.toFixed(2)} on this order.`)
         applied = true
         break
       } catch (err) {

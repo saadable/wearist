@@ -1,7 +1,7 @@
 import Checkout from '@/Components/Checkout/Checkout'
 
 export const metadata = {
-  title: 'Secure Checkout - Complete Your Audio Purchase | Wearist',
+  title: 'Secure Checkout - Complete Your Audio Purchase',
   description: 'Complete your secure checkout for premium audio products. Fast, safe payment processing with multiple options. Free shipping on orders over $50.',
   keywords: [
     'checkout',

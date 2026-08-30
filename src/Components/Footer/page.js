@@ -95,10 +95,8 @@ const Footer = () => {
         <div>
           <h4 className="font-semibold text-sm sm:text-base mb-2 sm:mb-3">Quick Links</h4>
           <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-white/80">
-            <li><Link href="/airpods" className="hover:text-white transition">Airpods</Link></li>
-            <li><Link href="#" className="hover:text-white transition">Headphones</Link></li>
-            <li><Link href="#" className="hover:text-white transition">Watches</Link></li>
-            <li><Link href="#" className="hover:text-white transition">Accessories</Link></li>
+            <li><Link href="/category/airpods" className="hover:text-white transition">Airpods</Link></li>
+            <li><Link href="/category/headphones" className="hover:text-white transition">Headphones</Link></li>
             <li><Link href="/sitemap.xml" className="hover:text-white transition underline-offset-2 hover:underline">Sitemap</Link></li>
             <li><Link href="/category-wise" className="hover:text-white transition underline-offset-2 hover:underline">Category Sitemap</Link></li>
           </ul>

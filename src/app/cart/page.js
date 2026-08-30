@@ -1,7 +1,7 @@
 import Cart from '@/Components/Cart/Cart'
 
 export const metadata = {
-  title: 'Shopping Cart - Review Your Audio Gear | Wearist',
+  title: 'Shopping Cart - Review Your Audio Gear',
   description: 'Review your selected premium audio products in your shopping cart. Update quantities, apply discounts, and proceed to secure checkout with free shipping options.',
   keywords: [
     'shopping cart',

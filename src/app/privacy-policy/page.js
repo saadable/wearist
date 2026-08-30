@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Privacy Policy - Data Protection & Security | Wearist',
+  title: 'Privacy Policy - Data Protection & Security',
   description: 'Learn how Wearist protects your privacy and handles your personal data. Read our comprehensive privacy policy covering data collection, usage, security, and your rights.',
   keywords: [
     'privacy policy',

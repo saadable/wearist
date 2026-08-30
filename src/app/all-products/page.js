@@ -1,7 +1,7 @@
 import AllProductsClient from './AllProductsClient'
 
 export const metadata = {
-  title: 'All Products - Premium Audio Gear | Wearist',
+  title: 'All Products - Premium Audio Gear',
   description: 'Discover our complete range of high-quality headphones, earbuds, speakers, and audio accessories. Filter by category, brand, price, and customer ratings. Enjoy free shipping on orders over $50.',
   keywords: [
     'headphones',

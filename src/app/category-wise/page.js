@@ -1,7 +1,7 @@
 import CategoryWiseClient from './CategoryWiseClient'
 
 export const metadata = {
-  title: 'Shop by Category - Audio Products | Wearist',
+  title: 'Shop by Category - Audio Products',
   description: 'Browse premium audio products by category. Find headphones, earbuds, speakers, and accessories organized by type. Shop with confidence and enjoy free shipping.',
   keywords: [
     'audio categories',

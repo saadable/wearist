@@ -10,8 +10,10 @@ const HomeBanner = () => {
       <Image
         src={Banner}
         alt="Home Banner"
-        layout="fill"
-        className="" // Use a theme color from your global CSS or tailwind.config.js
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover"
       />
 
       {/* Optional: Content Overlay */}

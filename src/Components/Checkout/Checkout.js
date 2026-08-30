@@ -261,6 +261,18 @@ const Checkout = () => {
     )
   }
 
+  if (!Array.isArray(items) || items.length === 0) {
+    return (
+      <div className='max-w-4xl mx-auto px-4 py-8 sm:py-12 text-center'>
+        <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-[#2785ca] mb-4'>Checkout</h1>
+        <p className='text-sm sm:text-base text-white mb-6'>Your cart is empty. Add items before checking out.</p>
+        <Link href='/all-products' className='inline-block bg-[#2785ca] text-white px-6 py-2.5 sm:py-3 rounded-md font-bold hover:bg-[#1f6fa8] transition-colors text-sm sm:text-base'>
+          Browse Products
+        </Link>
+      </div>
+    )
+  }
+
   return (
     <div className='max-w-6xl mx-auto px-4 py-6 sm:py-8 md:py-12'>
       <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-[#2785ca] mb-6 md:mb-8'>Checkout</h1>

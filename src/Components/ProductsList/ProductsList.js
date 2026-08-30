@@ -158,12 +158,12 @@ const ProductsList = ({ initialQuery = '' }) => {
       <header className='mb-6 md:mb-8'>
         <div className='flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between'>
           <div>
-            <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-[#2785ca]'>Search Results</h1>
+            <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-[#2785ca]'>{search ? 'Search Results' : 'All Products'}</h1>
             <p className='text-sm sm:text-base text-white mt-1 md:mt-2'>Refine the current result set instantly with advanced filters for the most relevant products.</p>
           </div>
           <div className='flex flex-wrap items-center gap-3'>
             <span className='rounded-[10px] bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm'>{filteredProducts.length} / {allProducts.length || 0} shown</span>
-            <span className='rounded-[10px] bg-[#2785ca]/10 px-4 py-2 text-sm font-medium text-white'>{search ? `Search: "${search}"` : 'Search Results'}</span>
+            <span className='rounded-[10px] bg-[#2785ca]/10 px-4 py-2 text-sm font-medium text-white'>{search ? `Search: "${search}"` : 'All products'}</span>
           </div>
         </div>
       </header>
@@ -330,8 +330,8 @@ const ProductsList = ({ initialQuery = '' }) => {
           <div className='mb-6 flex flex-col gap-3 rounded-[10px] border border-slate-200 bg-white p-3 shadow-[0_24px_80px_rgba(15,23,42,0.08)]'>
             <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
               <div>
-                <h2 className='text-lg font-semibold text-slate-900'>Search Results</h2>
-                <p className='text-sm text-slate-500'>Filters apply only to the products returned by your search.</p>
+                <h2 className='text-lg font-semibold text-slate-900'>{search ? 'Search Results' : 'All Products'}</h2>
+                <p className='text-sm text-slate-500'>{search ? 'Filters apply only to the products returned by your search.' : 'Filters apply to the full product catalog.'}</p>
               </div>
               <div className='inline-flex flex-wrap items-center gap-3'>
                 {selectedCategories.length > 0 && <span className='rounded-full bg-[#2785ca] px-3 py-1 text-xs font-semibold text-white'>{selectedCategories.length} category</span>}

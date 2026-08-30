@@ -7,8 +7,9 @@ const getMetadataApiBase = () => {
 
 export async function generateMetadata({ params }) {
   try {
+    const { slug } = await params
     const apiBase = getMetadataApiBase()
-    const url = `${apiBase}/api/products/product/${encodeURIComponent(params.slug)}`
+    const url = `${apiBase}/api/products/product/${encodeURIComponent(slug)}`
     const response = await fetch(url, {
       headers: { 'Accept': 'application/json' },
       cache: 'no-store',
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }) {
     if (!response.ok) {
       console.warn('Metadata fetch did not return OK status:', response.status, response.statusText)
       return {
-        title: 'Product Not Found | Wearist',
+        title: 'Product Not Found',
         description: 'The requested product could not be found.',
       }
     }
@@ -27,13 +28,14 @@ export async function generateMetadata({ params }) {
 
     if (!product) {
       return {
-        title: 'Product Not Found | Wearist',
+        title: 'Product Not Found',
         description: 'The requested product could not be found.',
       }
     }
 
-    const title = `${product.title} - Premium Audio Gear | Wearist`
+    const title = `${product.title} - Premium Audio Gear`
     const description = product.description?.substring(0, 155) + '...' || `Shop ${product.title} at Wearist. Premium audio products with free shipping.`
+    const firstImageUrl = typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url
 
     return {
       title,
@@ -52,12 +54,12 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title,
         description,
-        url: `https://www.wearist.store/products/${params.slug}`,
+        url: `https://www.wearist.store/products/${slug}`,
         siteName: 'Wearist',
-        type: 'product',
-        images: product.images?.length > 0 ? [
+        type: 'website',
+        images: firstImageUrl ? [
           {
-            url: product.images[0],
+            url: firstImageUrl,
             width: 1200,
             height: 630,
             alt: product.title,
@@ -75,10 +77,10 @@ export async function generateMetadata({ params }) {
         card: 'summary_large_image',
         title,
         description,
-        images: product.images?.[0] || 'https://www.wearist.store/og-image.png',
+        images: firstImageUrl || 'https://www.wearist.store/og-image.png',
       },
       alternates: {
-        canonical: `https://www.wearist.store/products/${params.slug}`,
+        canonical: `https://www.wearist.store/products/${slug}`,
       },
       robots: {
         index: true,
@@ -95,7 +97,7 @@ export async function generateMetadata({ params }) {
   } catch (error) {
     console.error('Error generating metadata:', error)
     return {
-      title: 'Product | Wearist',
+      title: 'Product',
       description: 'Premium audio products at Wearist.',
     }
   }

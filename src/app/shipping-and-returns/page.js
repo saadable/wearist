@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Shipping & Returns Policy - Fast Delivery & Easy Returns | Wearist',
+  title: 'Shipping & Returns Policy - Fast Delivery & Easy Returns',
   description: 'Learn about Wearist shipping options, delivery times, and hassle-free returns policy. Free shipping on orders over $50 with 60-day return window.',
   keywords: [
     'shipping policy',

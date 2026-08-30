@@ -46,7 +46,7 @@ const CategoryWiseProductsClient = () => {
           <div>
             <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-[#2785ca] mb-2'>Shop by Category</h1>
             <p className='text-sm sm:text-base text-gray-600'>
-              Explore our {categoryList.length} product categories
+              Explore our product categories
             </p>
           </div>
           <span className='inline-block bg-[#2785ca] text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold'>

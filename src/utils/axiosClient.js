@@ -6,7 +6,9 @@ const getBaseUrl = () => {
     const envUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || process.env.BASE_URL;
     if (envUrl) return envUrl.replace(/\/$/, '')
     if (typeof window !== 'undefined' && window.location?.origin) return window.location.origin.replace(/\/$/, '')
-    return 'http://localhost:4000'
+    // Server-side (no window, e.g. sitemap generation): browser CORS doesn't apply here,
+    // so it's safe to call the backend directly instead of a same-origin dev URL.
+    return 'https://wearist-backend.vercel.app'
 };
 
 export const axiosClient = axios.create(

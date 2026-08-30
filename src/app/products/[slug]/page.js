@@ -2,7 +2,8 @@ import ProductDetailClient from './ProductDetailClient'
 import { notFound } from 'next/navigation'
 
 const getMetadataApiBase = () => {
-  return (process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || process.env.BASE_URL || 'http://localhost:4000').replace(/\/$/, '')
+  // This always runs server-side, so browser CORS doesn't apply — safe to call the backend directly.
+  return (process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || process.env.BASE_URL || 'https://wearist-backend.vercel.app').replace(/\/$/, '')
 }
 
 export async function generateMetadata({ params }) {
